@@ -12,11 +12,11 @@ TODO:
 
 //setup variables
 const discord = require("discord.js"); //discord.js api
-const auth = require("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/auth.json"); //token file for discord
-const apiauth = require("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/apikey.json"); //api key file
+const auth = require("auth.json"); //token file for discord
+const apiauth = require("apikey.json"); //api key file
 const fs = require("fs"); //file writing
 const util = require("util"); //string formatting
-const functions = require("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/functions"); //helper functions file
+const functions = require("functions"); //helper functions file
 const http = require("https"); //api access
 
 //create bot, login, and set game
@@ -33,7 +33,7 @@ client.on("ready", () => {
 client.on("guildCreate", guild => {
 
   //check if file already exists
-  if(!fs.existsSync(util.format("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/serversettings/%s.json", guild.id))) {
+  if(!fs.existsSync(util.format("/serversettings/%s.json", guild.id))) {
 
     //write default values
     let defaultServerValues = {
@@ -41,7 +41,7 @@ client.on("guildCreate", guild => {
       prefix: "!"
     }
     let jsonServerValues = JSON.stringify(defaultServerValues, null, 2);
-    fs.writeFileSync(util.format("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/serversettings/%s.json", guild.id), jsonServerValues);
+    fs.writeFileSync(util.format("serversettings/%s.json", guild.id), jsonServerValues);
 
     console.log(util.format("Server settings created for %s.", guild.name));
 
@@ -62,14 +62,14 @@ client.on("message", message => {
   if(message.author.bot) return(1);
 
   //ensure that user settings exist for message author
-  if(!fs.existsSync(util.format("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/usersettings/%s.json", message.author.id))) {
+  if(!fs.existsSync(util.format("usersettings/%s.json", message.author.id))) {
 
     let defaultUserValues = {
       userName: message.author.username,
       gamertag: null
     }
     let jsonUserValues = JSON.stringify(defaultUserValues, null, 2);
-    fs.writeFileSync(util.format("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/usersettings/%s.json", message.author.id), jsonUserValues);
+    fs.writeFileSync(util.format("usersettings/%s.json", message.author.id), jsonUserValues);
 
     console.log(util.format("User settings created for %s.", message.author.username));
 
@@ -82,8 +82,8 @@ client.on("message", message => {
   const guildID = guild.id;
   const user = message.author;
   const userID = user.id;
-  const fileNameServer = util.format("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/serversettings/%s.json", guildID);
-  const fileNameUser = util.format("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/usersettings/%s.json", userID);
+  const fileNameServer = util.format("serversettings/%s.json", guildID);
+  const fileNameUser = util.format("usersettings/%s.json", userID);
   var serversettings = require(fileNameServer);
   var usersettings = require(fileNameUser);
 
@@ -428,7 +428,7 @@ client.on("message", message => {
             }, files: [
 
               {
-                attachment: util.format("/home/hubermjonathan/src/hw2statsbot/hw2statsbot/leaderpictures/%s.png", favoriteLeader),
+                attachment: util.format("leaderpictures/%s.png", favoriteLeader),
                 name: "leader.png"
               }
 
