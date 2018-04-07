@@ -199,7 +199,7 @@ client.on("message", message => {
 
         //get gamertag to store
         let gamertagToStore;
-        if(command == "links") {
+        if(command == "link") {
 
           gamertagToStore = message.content.substring(6);
 
