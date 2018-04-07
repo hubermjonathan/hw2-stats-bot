@@ -377,11 +377,13 @@ client.on("message", message => {
             var unitsBuilt = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsBuilt;
             var unitsLost = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsLost;
             var unitsDestroyed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsDestroyed;
+            var unitsKD = functions.round((unitsDestroyed / unitsLost), 2);
 
             //create units message
             var unitsMessage = "Units built: "+ unitsBuilt +"\n";
             unitsMessage += "Units lost: "+ unitsLost +"\n";
-            unitsMessage += "Units destroyed: "+ unitsDestroyed;
+            unitsMessage += "Units destroyed: "+ unitsDestroyed +"\n";
+            unitsMessage += "Units K/D ratio: "+ unitsKD;
 
             //check if bot has permission to embed links
             if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
