@@ -223,6 +223,15 @@ client.on("message", message => {
       case "s":
       case "stats":
 
+        //check for correct arguments
+        if(args[0] == null && usersettings.gamertag == null) {
+
+          //send error message for no arguments
+          channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
+          return(1);
+
+        }
+
         //get gamertag
         let gamertag;
         if(args[0] == null) {
