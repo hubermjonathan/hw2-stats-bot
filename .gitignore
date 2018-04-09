@@ -1,6 +1,4 @@
 auth.json
 apikey.json
 package-lock.json
-serversettings/*
-usersettings/*
 node_modules
