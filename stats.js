@@ -149,9 +149,7 @@ client.on("message", message => {
         helpMessage += "**link** (l): links your gamertag to your discord account so you don't have to type it to get stats\n";
         helpMessage += "usage: " + serversettings.prefix + "link [gamertag]\n\n";
         helpMessage += "**stats** (s): shows halo wars 2 team war stats for a given player\n";
-        helpMessage += "usage: " + serversettings.prefix + "stats [gamertag]\n\n";
-        helpMessage += "**ranked** (r): shows halo wars 2 ranked stats for a given player\n";
-        helpMessage += "usage: " + serversettings.prefix + "stats [gamertag]";
+        helpMessage += "usage: " + serversettings.prefix + "stats [gamertag];
 
         //check if bot has permission to embed links
         if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
