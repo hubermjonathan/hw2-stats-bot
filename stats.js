@@ -23,18 +23,14 @@ const http = require("https"); //api access
 const client = new discord.Client();
 client.login(auth.token);
 client.on("ready", () => {
-
   console.log(util.format("Logged in and running as %s.", client.user.username));
   client.user.setActivity("Halo Wars 2");
-
 });
 
 //create server-specific settings file on server join
 client.on("guildCreate", guild => {
-
   //check if file already exists
   if(!fs.existsSync(util.format("./serversettings/%s.json", guild.id))) {
-
     //write default values
     let defaultServerValues = {
       serverName: guild.name,
@@ -42,16 +38,12 @@ client.on("guildCreate", guild => {
     }
     let jsonServerValues = JSON.stringify(defaultServerValues, null, 2);
     fs.writeFileSync(util.format("./serversettings/%s.json", guild.id), jsonServerValues);
-
     console.log(util.format("Server settings created for %s.", guild.name));
-
   }
-
 });
 
 //execute user given commands
 client.on("message", message => {
-
   //ensure that the message came from a server and not a direct message
   if(message.guild == null) return(1);
 
@@ -63,16 +55,13 @@ client.on("message", message => {
 
   //ensure that user settings exist for message author
   if(!fs.existsSync(util.format("./usersettings/%s.json", message.author.id))) {
-
     let defaultUserValues = {
       userName: message.author.username,
       gamertag: null
     }
     let jsonUserValues = JSON.stringify(defaultUserValues, null, 2);
     fs.writeFileSync(util.format("./usersettings/%s.json", message.author.id), jsonUserValues);
-
     console.log(util.format("User settings created for %s.", message.author.username));
-
   }
 
   //relevant variables
@@ -88,7 +77,6 @@ client.on("message", message => {
   var usersettings = require(fileNameUser);
 
   if(message.content.substring(0, 1) == serversettings.prefix) {
-
     //split up command and arguments
     var args = message.content.substring(1).split(" ");
     var command = args[0];
@@ -96,27 +84,21 @@ client.on("message", message => {
 
     //determine the command
     switch(command) {
-
       //command: prefix (owner only)
       case "p":
       case "prefix":
-
         //check for correct permission
         if(!functions.checkIfOwner(user, guild)) {
-
           //send error message for no permission
           channel.send(util.format("<@!%s>, you are not permitted to use this command.", userID));
           return(1);
-
         }
 
         //check for correct argument
         if(args[0] == null) {
-
           //send error message for no arguments
           channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
           return(1);
-
         }
 
         //change prefix in server settings
@@ -127,20 +109,16 @@ client.on("message", message => {
         //send confirmation message
         channel.send(util.format("<@!%s>, the prefix has been set to '%s'.", userID, newPrefix));
         console.log(util.format("Changed prefix to '%s'.", newPrefix));
-
       break;
 
       //command: ping
       case "ping":
-
         channel.send("pong"+serversettings.prefix);
-
       break;
 
       //command: help
       case "h":
       case "help":
-
         //create help message
         var helpMessage = "**help** (h): shows this list\n";
         helpMessage += "usage: " + serversettings.prefix + "help\n\n";
@@ -149,26 +127,23 @@ client.on("message", message => {
         helpMessage += "**link** (l): links your gamertag to your discord account so you don't have to type it to get stats\n";
         helpMessage += "usage: " + serversettings.prefix + "link [gamertag]\n\n";
         helpMessage += "**stats** (s): shows halo wars 2 team war stats for a given player\n";
-        helpMessage += "usage: " + serversettings.prefix + "stats [gamertag]";
+        helpMessage += "usage: " + serversettings.prefix + "stats [gamertag]\n\n";
+        helpMessage += "**ranked** (r): shows halo wars 2 ranked stats for a given player\n";
+        helpMessage += "usage: " + serversettings.prefix + "ranked [gamertag]";
 
         //check if bot has permission to embed links
         if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
-
           //send error message for no arguments
           channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
           return(1);
-
         }
 
         //send embedded message with help
         channel.send({ embed: {
-
           author: {
             name: "Prefix for commands: '" + serversettings.prefix +"'"
           },
-
           color: 16711680,
-
           fields: [
             {
               name: "Commands",
@@ -176,35 +151,26 @@ client.on("message", message => {
               inline: false
             }
           ]
-
         }});
         console.log(util.format("Sent help message to %s.", guild.name));
-
       break;
 
       //command: link
       case "l":
       case "link":
-
         //check for correct arguments
         if(args[0] == null) {
-
           //send error message for no arguments
           channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
           return(1);
-
         }
 
         //get gamertag to store
         let gamertagToStore;
         if(command == "link") {
-
           gamertagToStore = message.content.substring(6);
-
         } else if(command == "l") {
-
           gamertagToStore = message.content.substring(3);
-
         }
 
         //change gamertag in user settings
@@ -214,45 +180,33 @@ client.on("message", message => {
         //send confirmation message
         channel.send(util.format("<@!%s>, your gamertag has been set to '%s'.", userID, gamertagToStore));
         console.log(util.format("Changed %s's gamertag to '%s'", usersettings.userName, gamertagToStore));
-
       break;
 
       //command: stats
       case "s":
       case "stats":
-
         //check for correct arguments
         if(args[0] == null && usersettings.gamertag == null) {
-
           //send error message for no arguments
           channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
           return(1);
-
         }
 
         //get gamertag
         let gamertag;
         if(args[0] == null) {
-
           gamertag = usersettings.gamertag;
-
         } else if(command == "stats") {
-
           gamertag = message.content.substring(7);
-
         } else if(command == "s") {
-
           gamertag = message.content.substring(3);
-
         }
 
         //check for correct argument
         if(gamertag.length > 15) {
-
           //send error message for no arguments
           channel.send(util.format("<@!%s>, that is not a valid gamertag.", userID));
           return(1);
-
         }
 
         //format gamertags with spaces
@@ -269,14 +223,11 @@ client.on("message", message => {
 
         //get request
         http.get(options, (res) => {
-
           //check for valid gamertag
           if (res.statusCode == 404) {
-
             //send error message for invalid gamertag
             channel.send(util.format("<@!%s>, that is not a valid gamertag.", userID));
             return(1);
-
           }
 
           //get user stats
@@ -285,48 +236,39 @@ client.on("message", message => {
 
           //create and send message when all data is received
           res.on("end", () => {
-
             //parse data
             const parsedData = JSON.parse(rawData);
 
             //check if user has not played games
             if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
-
               //send error message for no arguments
               channel.send(util.format("<@!%s>, %s has not played any games.", userID, gamertag));
               return(1);
-
             }
 
             //find correct index
             var index = -1;
             for(var i = 0; i < parsedData.MatchmakingSummary.SocialPlaylistStats.length; i++) {
-
               //team war id
               if(parsedData.MatchmakingSummary.SocialPlaylistStats[i].PlaylistId == "282fc197-7bf1-4865-81ec-a312d07567b6") {
-
                 index = i;
                 break;
-
               }
-
             }
 
             //get data for games section
             var timeISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalTimePlayed;
             let timePlayed;
             if(timeISO.includes("H")) {
-
               timePlayed = timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("H"));
               timePlayed += "h ";
               timePlayed += timeISO.substring(timeISO.indexOf("H")+1, timeISO.indexOf("M"));
               timePlayed += "m";
-
-            } else {
-
+            } else if(timeISO.includes("M")){
               timePlayed = timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("M"));
               timePlayed += "m"
-
+            } else {
+              timePlayed = "0m";
             }
             var gamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesStarted;
             var gamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesWon;
@@ -344,29 +286,23 @@ client.on("message", message => {
             var max = -1;
             var favoriteLeader = "";
             for(var leader in parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats) {
-
               if(parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted > max) {
-
                 max = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted;
                 favoriteLeader = leader;
-
               }
-
             }
             var leaderISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalTimePlayed;
             let leaderTimePlayed;
             if(leaderISO.includes("H")) {
-
               leaderTimePlayed = leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("H"));
               leaderTimePlayed += "h ";
               leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("H")+1, leaderISO.indexOf("M"));
               leaderTimePlayed += "m";
-
-            } else {
-
+            } else if(leaderISO.includes("M")) {
               leaderTimePlayed = leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("M"));
               leaderTimePlayed += "m";
-
+            } else {
+              leaderTimePlayed = "0m";
             }
             var leaderGamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesStarted;
             var leaderGamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesWon;
@@ -387,7 +323,11 @@ client.on("message", message => {
             var unitsBuilt = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsBuilt;
             var unitsLost = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsLost;
             var unitsDestroyed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsDestroyed;
-            var unitsKD = functions.round((unitsDestroyed / unitsLost), 2);
+            if(unitsLost != 0) {
+              var unitsKD = functions.round((unitsDestroyed / unitsLost), 2);
+            } else {
+              var unitsKD = "Infinity";
+            }
 
             //create units message
             var unitsMessage = "Units built: "+ unitsBuilt +"\n";
@@ -397,28 +337,22 @@ client.on("message", message => {
 
             //check if bot has permission to embed links
             if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
-
               //send error message for no arguments
               channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
               return(1);
-
             }
 
             //send embedded message with stats
             channel.send({ embed: {
-
               author: {
                 name: "Team War Stats for " + gamertag
               },
-
               color: 16711680,
-
               thumbnail: {
                 url: "attachment://leader.png",
                 height: 1920 * .01,
                 width: 1452 * .01
               },
-
               fields: [
                 {
                   name: "Games",
@@ -436,59 +370,42 @@ client.on("message", message => {
                   inline: true
                 }
               ]
-
             }, files: [
-
               {
                 attachment: util.format("./leaderpictures/%s.png", favoriteLeader),
                 name: "leader.png"
               }
-
             ]});
             console.log(util.format("Sent stats message for %s in %s.", gamertag, guild.name));
-
           });
-
         });
-
       break;
 
       //command: stats
       case "r":
       case "ranked":
-
         //check for correct arguments
         if(args[0] == null && usersettings.gamertag == null) {
-
           //send error message for no arguments
           channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
           return(1);
-
         }
 
         //get gamertag
         let rgamertag;
         if(args[0] == null) {
-
           rgamertag = usersettings.gamertag;
-
         } else if(command == "ranked") {
-
           rgamertag = message.content.substring(7);
-
         } else if(command == "r") {
-
           rgamertag = message.content.substring(3);
-
         }
 
         //check for correct argument
         if(rgamertag.length > 15) {
-
           //send error message for no arguments
           channel.send(util.format("<@!%s>, that is not a valid gamertag.", userID));
           return(1);
-
         }
 
         //format gamertags with spaces
@@ -505,14 +422,11 @@ client.on("message", message => {
 
         //get request
         http.get(roptions, (res) => {
-
           //check for valid gamertag
           if (res.statusCode == 404) {
-
             //send error message for invalid gamertag
             channel.send(util.format("<@!%s>, that is not a valid gamertag.", userID));
             return(1);
-
           }
 
           //get user stats
@@ -521,17 +435,13 @@ client.on("message", message => {
 
           //create and send message when all data is received
           res.on("end", () => {
-
             //parse data
             const parsedData = JSON.parse(rawData);
-
             //check if user has not played games
             if(parsedData.RankedPlaylistStats.length == 0) {
-
               //send error message for no arguments
               channel.send(util.format("<@!%s>, %s has not played any games.", userID, rgamertag));
               return(1);
-
             }
 
             //get data for 1v1 war section
@@ -577,9 +487,11 @@ client.on("message", message => {
                 onesTimePlayed += "h ";
                 onesTimePlayed += onesISO.substring(onesISO.indexOf("H")+1, onesISO.indexOf("M"));
                 onesTimePlayed += "m";
-              } else {
+              } else if(onesISO.includes("M")) {
                 onesTimePlayed = onesISO.substring(onesISO.indexOf("T")+1, onesISO.indexOf("M"));
                 onesTimePlayed += "m";
+              } else {
+                onesTimePlayed = "0m";
               }
               var onesGamesPlayed = parsedData.RankedPlaylistStats[onesIndex].TotalMatchesStarted;
               var onesGamesWon = parsedData.RankedPlaylistStats[onesIndex].TotalMatchesWon;
@@ -651,9 +563,11 @@ client.on("message", message => {
                 threesTimePlayed += "h ";
                 threesTimePlayed += threesISO.substring(threesISO.indexOf("H")+1, threesISO.indexOf("M"));
                 threesTimePlayed += "m";
-              } else {
+              } else if(threesISO.includes("H")) {
                 threesTimePlayed = threesISO.substring(threesISO.indexOf("T")+1, threesISO.indexOf("M"));
                 threesTimePlayed += "m";
+              } else {
+                threesTimePlayed = "0m";
               }
               var threesGamesPlayed = parsedData.RankedPlaylistStats[threesIndex].TotalMatchesStarted;
               var threesGamesWon = parsedData.RankedPlaylistStats[threesIndex].TotalMatchesWon;
@@ -692,28 +606,22 @@ client.on("message", message => {
 
             //check if bot has permission to embed links
             if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
-
               //send error message for no arguments
               channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
               return(1);
-
             }
 
             //send embedded message with stats
             channel.send({ embed: {
-
               author: {
                 name: "Ranked Stats for " + rgamertag
               },
-
               color: 16711680,
-
               thumbnail: {
                 url: "attachment://designation.png",
                 height: 1920 * .01,
                 width: 1452 * .01
               },
-
               fields: [
                 {
                   name: "1v1 War",
@@ -728,28 +636,21 @@ client.on("message", message => {
               ]
 
             }, files: [
-
               {
                 attachment: util.format("./designations/%s.png", highestDesignation),
                 name: "designation.png"
               }
-
             ]});
             console.log(util.format("Sent stats message for %s in %s.", rgamertag, guild.name));
-
           });
-
         });
-
       break;
 
       //no command
       default:
-
         //send error message for invalid command
         channel.send(util.format("<@!%s>, that is not a valid command.", userID));
         return(1);
-
       break;
 
     }
