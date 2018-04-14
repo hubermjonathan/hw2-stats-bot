@@ -598,7 +598,9 @@ client.on("message", message => {
 
             //get highestDesignation
             var highestDesignation = -1;
-            if(onesRankNumber > highestDesignation) {
+            if(onesRankNumber == undefined || threesRankNumber == undefined) {
+              highestDesignation = 0;
+            } else if(onesRankNumber > highestDesignation) {
               highestDesignation = onesRankNumber;
             } else {
               highestDesignation = threesRankNumber;
