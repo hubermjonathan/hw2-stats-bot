@@ -259,14 +259,14 @@ client.on("message", message => {
             //get data for games section
             var timeISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalTimePlayed;
             let timePlayed;
-            if(timeISO.includes("H")) {
+            if(timeISO.includes("H") && timeISO.includes("M")) {
               timePlayed = timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("H"));
               timePlayed += "h ";
               timePlayed += timeISO.substring(timeISO.indexOf("H")+1, timeISO.indexOf("M"));
               timePlayed += "m";
-            } else if(timeISO.includes("M")){
-              timePlayed = timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("M"));
-              timePlayed += "m"
+            } else if(timeISO.includes("H") && !timeISO.includes("M")) {
+              timePlayed = timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("H"));
+              timePlayed += "h";
             } else {
               timePlayed = "0m";
             }
@@ -293,14 +293,14 @@ client.on("message", message => {
             }
             var leaderISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalTimePlayed;
             let leaderTimePlayed;
-            if(leaderISO.includes("H")) {
+            if(leaderISO.includes("H") && leaderISO.includes("M")) {
               leaderTimePlayed = leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("H"));
               leaderTimePlayed += "h ";
               leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("H")+1, leaderISO.indexOf("M"));
               leaderTimePlayed += "m";
-            } else if(leaderISO.includes("M")) {
-              leaderTimePlayed = leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("M"));
-              leaderTimePlayed += "m";
+            } else if(leaderISO.includes("H") && !leaderISO.includes("M")) {
+              leaderTimePlayed = leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("H"));
+              leaderTimePlayed += "h";
             } else {
               leaderTimePlayed = "0m";
             }
@@ -482,11 +482,14 @@ client.on("message", message => {
                 var onesCsr = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Raw;
               }
               var onesISO = parsedData.RankedPlaylistStats[onesIndex].TotalTimePlayed;
-              if(onesISO.includes("H")) {
+              if(onesISO.includes("H") && onesISO.includes("M")) {
                 var onesTimePlayed = onesISO.substring(onesISO.indexOf("T")+1, onesISO.indexOf("H"));
                 onesTimePlayed += "h ";
                 onesTimePlayed += onesISO.substring(onesISO.indexOf("H")+1, onesISO.indexOf("M"));
                 onesTimePlayed += "m";
+              } else if(onesISO.includes("H") && !onesISO.includes("M")) {
+                var onesTimePlayed = onesISO.substring(onesISO.indexOf("T")+1, onesISO.indexOf("H"));
+                onesTimePlayed += "h";
               } else if(onesISO.includes("M")) {
                 onesTimePlayed = onesISO.substring(onesISO.indexOf("T")+1, onesISO.indexOf("M"));
                 onesTimePlayed += "m";
@@ -558,14 +561,14 @@ client.on("message", message => {
                 var threesCsr = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Raw;
               }
               var threesISO = parsedData.RankedPlaylistStats[threesIndex].TotalTimePlayed
-              if(threesISO.includes("H")) {
+              if(threesISO.includes("H") && threesISO.includes("M")) {
                 var threesTimePlayed = threesISO.substring(threesISO.indexOf("T")+1, threesISO.indexOf("H"));
                 threesTimePlayed += "h ";
                 threesTimePlayed += threesISO.substring(threesISO.indexOf("H")+1, threesISO.indexOf("M"));
                 threesTimePlayed += "m";
-              } else if(threesISO.includes("H")) {
-                threesTimePlayed = threesISO.substring(threesISO.indexOf("T")+1, threesISO.indexOf("M"));
-                threesTimePlayed += "m";
+              } else if(threesISO.includes("H") && !threesISO.includes("M")) {
+                var threesTimePlayed = threesISO.substring(threesISO.indexOf("T")+1, threesISO.indexOf("H"));
+                threesTimePlayed += "h";
               } else {
                 threesTimePlayed = "0m";
               }
