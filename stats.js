@@ -383,7 +383,7 @@ client.on("message", message => {
               ]
             }, files: [
               {
-                attachment: util.format("./leaderpictures/%s.png", favoriteLeader),
+                attachment: util.format("./assets/leaderpictures/%s.png", favoriteLeader),
                 name: "leader.png"
               }
             ]});
@@ -664,7 +664,7 @@ client.on("message", message => {
 
             }, files: [
               {
-                attachment: util.format("./designations/%s.png", highestDesignation),
+                attachment: util.format("./assets/designations/%s.png", highestDesignation),
                 name: "designation.png"
               }
             ]});
