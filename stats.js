@@ -23,31 +23,13 @@ const client = new discord.Client();
 client.login(auth.token);
 client.on("ready", () => {
   console.log(util.format("Logged in and running as %s.", client.user.username));
-  client.user.setActivity("Halo Wars 2");
-});
-
-//create server-specific settings file on server join
-client.on("guildCreate", guild => {
-  //check if file already exists
-  if(!fs.existsSync(util.format("./serversettings/%s.json", guild.id))) {
-    //write default values
-    let defaultServerValues = {
-      serverName: guild.name,
-      prefix: "!"
-    }
-    let jsonServerValues = JSON.stringify(defaultServerValues, null, 2);
-    fs.writeFileSync(util.format("./serversettings/%s.json", guild.id), jsonServerValues);
-    console.log(util.format("Server settings created for %s.", guild.name));
-  }
+  client.user.setActivity("~help");
 });
 
 //execute user given commands
 client.on("message", message => {
   //ensure that the message came from a server and not a direct message
   if(message.guild == null) return(1);
-
-  //ensure that server settings exist for current server
-  client.emit("guildCreate", message.guild);
 
   //esnure that message author is not the bot
   if(message.author.bot) return(1);
@@ -70,12 +52,10 @@ client.on("message", message => {
   const guildID = guild.id;
   const user = message.author;
   const userID = user.id;
-  const fileNameServer = util.format("./serversettings/%s.json", guildID);
   const fileNameUser = util.format("./usersettings/%s.json", userID);
-  var serversettings = require(fileNameServer);
   var usersettings = require(fileNameUser);
 
-  if(message.content.substring(0, 1) == serversettings.prefix) {
+  if(message.content.substring(0, 1) == "~") {
     //split up command and arguments
     var args = message.content.substring(1).split(" ");
     var command = args[0];
@@ -83,36 +63,9 @@ client.on("message", message => {
 
     //determine the command
     switch(command) {
-      //command: prefix (owner only)
-      case "p":
-      case "prefix":
-        //check for correct permission
-        if(!functions.checkIfOwner(user, guild)) {
-          //send error message for no permission
-          channel.send(util.format("<@!%s>, you are not permitted to use this command.", userID));
-          return(1);
-        }
-
-        //check for correct argument
-        if(args[0] == null) {
-          //send error message for no arguments
-          channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
-          return(1);
-        }
-
-        //change prefix in server settings
-        var newPrefix = args[0].substring(0,1);
-        serversettings.prefix = newPrefix;
-        fs.writeFileSync(fileNameServer, JSON.stringify(serversettings, null, 2));
-
-        //send confirmation message
-        channel.send(util.format("<@!%s>, the prefix has been set to '%s'.", userID, newPrefix));
-        console.log(util.format("Changed prefix to '%s'.", newPrefix));
-      break;
-
       //command: ping
       case "ping":
-        channel.send("pong"+serversettings.prefix);
+        channel.send("pong~");
       break;
 
       //command: help
@@ -120,15 +73,13 @@ client.on("message", message => {
       case "help":
         //create help message
         var helpMessage = "**help** (h): shows this list\n";
-        helpMessage += "usage: " + serversettings.prefix + "help\n\n";
-        helpMessage += "**prefix** (p): changes the command prefix, owner only\n";
-        helpMessage += "usage: " + serversettings.prefix + "prefix [newPrefix]\n\n";
+        helpMessage += "usage: ~help\n\n";
         helpMessage += "**link** (l): links your gamertag to your discord account so you don't have to type it to get stats\n";
-        helpMessage += "usage: " + serversettings.prefix + "link [gamertag]\n\n";
+        helpMessage += "usage: ~link [gamertag]\n\n";
         helpMessage += "**stats** (s): shows halo wars 2 team war stats for a given player\n";
-        helpMessage += "usage: " + serversettings.prefix + "stats [gamertag]\n\n";
+        helpMessage += "usage: ~stats [gamertag]\n\n";
         helpMessage += "**ranked** (r): shows halo wars 2 ranked stats for a given player\n";
-        helpMessage += "usage: " + serversettings.prefix + "ranked [gamertag]";
+        helpMessage += "usage: ~ranked [gamertag]";
 
         //check if bot has permission to embed links
         if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
@@ -140,7 +91,7 @@ client.on("message", message => {
         //send embedded message with help
         channel.send({ embed: {
           author: {
-            name: "Prefix for commands: '" + serversettings.prefix +"'"
+            name: "Prefix for commands: '~'"
           },
           color: 16711680,
           fields: [
