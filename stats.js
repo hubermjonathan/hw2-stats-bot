@@ -12,11 +12,16 @@ TODO:
 //setup variables
 const discord = require("discord.js"); //discord.js api
 const auth = require("./auth.json"); //token file for discord
-const apiauth = require("./apikey.json"); //api key file
 const fs = require("fs"); //file writing
 const util = require("util"); //string formatting
-const functions = require("./functions"); //helper functions file
 const http = require("https"); //api access
+const red = 16711680; //color red
+
+//precision rounding function
+function precisionRound(number, precision) {
+  var factor = Math.pow(10, precision);
+  return Math.round(number * factor) / factor;
+}
 
 //create bot, login, and set game
 const client = new discord.Client();
@@ -45,7 +50,7 @@ client.on("message", message => {
     console.log(util.format("User settings created for %s.", message.author.username));
   }
 
-  //relevant variables
+  //event variables
   const channel = message.channel;
   const channelID = channel.id;
   const guild = message.guild;
@@ -55,8 +60,9 @@ client.on("message", message => {
   const fileNameUser = util.format("./usersettings/%s.json", userID);
   var usersettings = require(fileNameUser);
 
+  //commands section
   if(message.content.substring(0, 1) == "~") {
-    //split up command and arguments
+    //command variables
     var args = message.content.substring(1).split(" ");
     var command = args[0];
     args = args.splice(1);
@@ -66,6 +72,7 @@ client.on("message", message => {
       //command: ping
       case "ping":
         channel.send("pong~");
+        console.log(util.format("Sent ping message to %s.", guild.name));
       break;
 
       //command: help
@@ -75,16 +82,17 @@ client.on("message", message => {
         var helpMessage = "**help** (h): shows this list\n";
         helpMessage += "usage: ~help\n\n";
         helpMessage += "**link** (l): links your gamertag to your discord account so you don't have to type it to get stats\n";
-        helpMessage += "usage: ~link [gamertag]\n\n";
+        helpMessage += "usage: ~link <gamertag>\n\n";
         helpMessage += "**stats** (s): shows halo wars 2 team war stats for a given player\n";
-        helpMessage += "usage: ~stats [gamertag]\n\n";
+        helpMessage += "usage: ~stats <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows halo wars 2 ranked stats for a given player\n";
-        helpMessage += "usage: ~ranked [gamertag]";
+        helpMessage += "usage: ~ranked <gamertag>";
 
         //check if bot has permission to embed links
         if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
           //send error message for no arguments
           channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
+          console.log(util.format("Sent permissions error message to %s.", guild.name));
           return(1);
         }
 
@@ -93,7 +101,7 @@ client.on("message", message => {
           author: {
             name: "Prefix for commands: '~'"
           },
-          color: 16711680,
+          color: red,
           fields: [
             {
               name: "Commands",
@@ -110,8 +118,9 @@ client.on("message", message => {
       case "link":
         //check for correct arguments
         if(args[0] == null) {
-          //send error message for no arguments
-          channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
+          //send error message for no gamertag
+          channel.send(util.format("<@!%s>, please provide a gamertag to link.", userID));
+          console.log(util.format("Sent link error message to %s.", guild.name));
           return(1);
         }
 
@@ -138,7 +147,8 @@ client.on("message", message => {
         //check for correct arguments
         if(args[0] == null && usersettings.gamertag == null) {
           //send error message for no arguments
-          channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
+          channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", userID));
+          console.log(util.format("Sent stats error message to %s.", guild.name));
           return(1);
         }
 
@@ -155,19 +165,20 @@ client.on("message", message => {
         //check for correct argument
         if(gamertag.length > 15) {
           //send error message for no arguments
-          channel.send(util.format("<@!%s>, that is not a valid gamertag.", userID));
+          channel.send(util.format("<@!%s>, that gamertag is too long.", userID));
+          console.log(util.format("Sent stats error message to %s.", guild.name));
           return(1);
         }
 
         //format gamertags with spaces
-        var gamertagF = gamertag.replace(/ /g, "%20");
+        let gamertagFormatted = gamertag.replace(/ /g, "%20");
 
         //information to connect to haloapi
         const options = {
           hostname: "www.haloapi.com",
-          path: util.format("/stats/hw2/players/%s/stats?", gamertagF),
+          path: util.format("/stats/hw2/players/%s/stats?", gamertagFormatted),
           headers: {
-            "Ocp-Apim-Subscription-Key": apiauth.key
+            "Ocp-Apim-Subscription-Key": auth.key
           }
         };
 
@@ -176,11 +187,12 @@ client.on("message", message => {
           //check for valid gamertag
           if (res.statusCode == 404) {
             //send error message for invalid gamertag
-            channel.send(util.format("<@!%s>, that is not a valid gamertag.", userID));
+            channel.send(util.format("<@!%s>, that gamertag does not exist.", userID));
+            console.log(util.format("Sent stats error message to %s.", guild.name));
             return(1);
           }
 
-          //get user stats
+          //get user stats from api
           var rawData = "";
           res.on("data", (chunk) => { rawData += chunk; });
 
@@ -193,13 +205,14 @@ client.on("message", message => {
             if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
               //send error message for no arguments
               channel.send(util.format("<@!%s>, %s has not played any games.", userID, gamertag));
+              console.log(util.format("Sent stats error message to %s.", guild.name));
               return(1);
             }
 
             //find correct index
             var index = -1;
             for(var i = 0; i < parsedData.MatchmakingSummary.SocialPlaylistStats.length; i++) {
-              //team war id
+              //find team war id
               if(parsedData.MatchmakingSummary.SocialPlaylistStats[i].PlaylistId == "282fc197-7bf1-4865-81ec-a312d07567b6") {
                 index = i;
                 break;
@@ -229,7 +242,7 @@ client.on("message", message => {
             var gamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesStarted;
             var gamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesWon;
             var gamesLost = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesLost;
-            var winPercent = functions.round((gamesWon / gamesPlayed) * 100, 2);
+            var winPercent = precisionRound((gamesWon / gamesPlayed) * 100, 2);
 
             //create games message
             var gamesMessage = "Time played: "+ timePlayed +"\n";
@@ -268,7 +281,7 @@ client.on("message", message => {
             }
             var leaderGamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesStarted;
             var leaderGamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesWon;
-            var leaderWinPercent = functions.round((leaderGamesWon / leaderGamesPlayed) * 100, 2);
+            var leaderWinPercent = precisionRound((leaderGamesWon / leaderGamesPlayed) * 100, 2);
             var leaderPowersUsed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalLeaderPowersCast;
             if(favoriteLeader == "Lekgolo") {
               favoriteLeader = "Colony"
@@ -286,7 +299,7 @@ client.on("message", message => {
             var unitsLost = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsLost;
             var unitsDestroyed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsDestroyed;
             if(unitsLost != 0) {
-              var unitsKD = functions.round((unitsDestroyed / unitsLost), 2);
+              var unitsKD = precisionRound((unitsDestroyed / unitsLost), 2);
             } else {
               var unitsKD = "Infinity";
             }
@@ -301,6 +314,7 @@ client.on("message", message => {
             if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
               //send error message for no arguments
               channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
+              console.log(util.format("Sent permissions error message to %s.", guild.name));
               return(1);
             }
 
@@ -349,36 +363,38 @@ client.on("message", message => {
         //check for correct arguments
         if(args[0] == null && usersettings.gamertag == null) {
           //send error message for no arguments
-          channel.send(util.format("<@!%s>, that is not a valid argument.", userID));
+          channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", userID));
+          console.log(util.format("Sent ranked error message to %s.", guild.name));
           return(1);
         }
 
         //get gamertag
-        let rgamertag;
+        let rankedGamertag;
         if(args[0] == null) {
-          rgamertag = usersettings.gamertag;
+          rankedGamertag = usersettings.gamertag;
         } else if(command == "ranked") {
-          rgamertag = message.content.substring(7);
+          rankedGamertag = message.content.substring(7);
         } else if(command == "r") {
-          rgamertag = message.content.substring(3);
+          rankedGamertag = message.content.substring(3);
         }
 
         //check for correct argument
-        if(rgamertag.length > 15) {
+        if(rankedGamertag.length > 15) {
           //send error message for no arguments
-          channel.send(util.format("<@!%s>, that is not a valid gamertag.", userID));
+          channel.send(util.format("<@!%s>, that gamertag is too long.", userID));
+          console.log(util.format("Sent ranked error message to %s.", guild.name));
           return(1);
         }
 
         //format gamertags with spaces
-        var rgamertagF = rgamertag.replace(/ /g, "%20");
+        let rankedGamertagFormatted = rankedGamertag.replace(/ /g, "%20");
 
         //information to connect to haloapi
         const roptions = {
           hostname: "www.haloapi.com",
-          path: util.format("/stats/hw2/players/%s/stats/seasons/current", rgamertagF),
+          path: util.format("/stats/hw2/players/%s/stats/seasons/current", rankedGamertagFormatted),
           headers: {
-            "Ocp-Apim-Subscription-Key": apiauth.key
+            "Ocp-Apim-Subscription-Key": auth.key
           }
         };
 
@@ -387,7 +403,8 @@ client.on("message", message => {
           //check for valid gamertag
           if (res.statusCode == 404) {
             //send error message for invalid gamertag
-            channel.send(util.format("<@!%s>, that is not a valid gamertag.", userID));
+            channel.send(util.format("<@!%s>, that gamertag does not exist.", userID));
+            console.log(util.format("Sent ranked error message to %s.", guild.name));
             return(1);
           }
 
@@ -402,7 +419,8 @@ client.on("message", message => {
             //check if user has not played games
             if(parsedData.RankedPlaylistStats.length == 0) {
               //send error message for no arguments
-              channel.send(util.format("<@!%s>, %s has not played any games.", userID, rgamertag));
+              channel.send(util.format("<@!%s>, %s has not played any games.", userID, rankedGamertag));
+              console.log(util.format("Sent ranked error message to %s.", guild.name));
               return(1);
             }
 
@@ -411,7 +429,7 @@ client.on("message", message => {
             //find correct index
             var onesIndex = -1;
             for(var i = 0; i < parsedData.RankedPlaylistStats.length; i++) {
-              //team war id
+              //find ranked ones id
               if(parsedData.RankedPlaylistStats[i].PlaylistId == "548d864e-8666-430e-9140-8dd2ad8fbfcd") {
                 onesIndex = i;
                 break;
@@ -465,7 +483,7 @@ client.on("message", message => {
               var onesGamesPlayed = parsedData.RankedPlaylistStats[onesIndex].TotalMatchesStarted;
               var onesGamesWon = parsedData.RankedPlaylistStats[onesIndex].TotalMatchesWon;
               var onesGamesLost = parsedData.RankedPlaylistStats[onesIndex].TotalMatchesLost;
-              var onesWinPercent = functions.round((onesGamesWon / onesGamesPlayed) * 100, 2);
+              var onesWinPercent = precisionRound((onesGamesWon / onesGamesPlayed) * 100, 2);
               var onesMax = -1;
               var onesFavoriteLeader = "";
               for(var leader in parsedData.RankedPlaylistStats[onesIndex].LeaderStats) {
@@ -494,7 +512,7 @@ client.on("message", message => {
             //find correct index
             var threesIndex = -1;
             for(var i = 0; i < parsedData.RankedPlaylistStats.length; i++) {
-              //team war id
+              //find ranked threes id
               if(parsedData.RankedPlaylistStats[i].PlaylistId == "4a2cedcc-9098-4728-886f-60649896278d") {
                 threesIndex = i;
                 break;
@@ -548,7 +566,7 @@ client.on("message", message => {
               var threesGamesPlayed = parsedData.RankedPlaylistStats[threesIndex].TotalMatchesStarted;
               var threesGamesWon = parsedData.RankedPlaylistStats[threesIndex].TotalMatchesWon;
               var threesGamesLost = parsedData.RankedPlaylistStats[threesIndex].TotalMatchesLost;
-              var threesWinPercent = functions.round((threesGamesWon / threesGamesPlayed) * 100, 2);
+              var threesWinPercent = precisionRound((threesGamesWon / threesGamesPlayed) * 100, 2);
               var threesMax = -1;
               var threesFavoriteLeader = "";
               for(var leader in parsedData.RankedPlaylistStats[threesIndex].LeaderStats) {
@@ -586,13 +604,14 @@ client.on("message", message => {
             if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
               //send error message for no arguments
               channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
+              console.log(util.format("Sent permissions error message to %s.", guild.name));
               return(1);
             }
 
             //send embedded message with stats
             channel.send({ embed: {
               author: {
-                name: "Ranked Stats for " + rgamertag
+                name: "Ranked Stats for " + rankedGamertag
               },
               color: 16711680,
               thumbnail: {
@@ -619,7 +638,7 @@ client.on("message", message => {
                 name: "designation.png"
               }
             ]});
-            console.log(util.format("Sent stats message for %s in %s.", rgamertag, guild.name));
+            console.log(util.format("Sent ranked message for %s in %s.", rankedGamertag, guild.name));
           });
         });
       break;
