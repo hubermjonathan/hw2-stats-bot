@@ -10,6 +10,8 @@ hw2statsbot is a discord bot that provides statistics for the game halo wars 2</
 **ranked stats** - get stats for 1v1 ranked and 3v3 ranked like rank, csr, and win percentage
 ### upcoming features
 none so far, create a request for one if you have an idea
+### version history
+**1.0.0** - gamertag linking, team war stats, ranked stats
 ### creating your own version
 1. click fork in the upper right hand corner to create a copy of this repo to edit on your own
 2. clone your repo
