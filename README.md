@@ -1,4 +1,5 @@
 # hw2statsbot
+**v1.0.0**</br>
 hw2statsbot is a discord bot that provides statistics for the game halo wars 2</br>
 [main code](stats.js)
 
