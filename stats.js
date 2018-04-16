@@ -7,7 +7,6 @@ by jon huber
 /*
 TODO:
   look for ways to break program
-  test gamertag 'thestormleader'
 */
 
 //setup variables
@@ -258,17 +257,23 @@ client.on("message", message => {
 
             //get data for games section
             var timeISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalTimePlayed;
-            let timePlayed;
-            if(timeISO.includes("H") && timeISO.includes("M")) {
-              timePlayed = timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("H"));
+            var timePlayed = "";
+            if(timeISO.includes("D")) {
+              timePlayed += timeISO.substring(timeISO.indexOf("P")+1, timeISO.indexOf("D"));
+              timePlayed += "d ";
+            }
+            if(timeISO.includes("H")) {
+              timePlayed += timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("H"));
               timePlayed += "h ";
-              timePlayed += timeISO.substring(timeISO.indexOf("H")+1, timeISO.indexOf("M"));
-              timePlayed += "m";
-            } else if(timeISO.includes("H") && !timeISO.includes("M")) {
-              timePlayed = timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("H"));
-              timePlayed += "h";
-            } else {
-              timePlayed = "0m";
+            }
+            if(timeISO.includes("M")) {
+              if(timeISO.substring(timeISO.indexOf("M")-2, timeISO.indexOf("M")).includes("H") || timeISO.substring(timeISO.indexOf("M")-2, timeISO.indexOf("M")).includes("T")) {
+                timePlayed += timeISO.substring(timeISO.indexOf("M")-1, timeISO.indexOf("M"));
+                timePlayed += "m";
+              } else {
+                timePlayed += timeISO.substring(timeISO.indexOf("M")-2, timeISO.indexOf("M"));
+                timePlayed += "m";
+              }
             }
             var gamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesStarted;
             var gamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesWon;
@@ -292,17 +297,23 @@ client.on("message", message => {
               }
             }
             var leaderISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalTimePlayed;
-            let leaderTimePlayed;
-            if(leaderISO.includes("H") && leaderISO.includes("M")) {
-              leaderTimePlayed = leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("H"));
+            var leaderTimePlayed = "";
+            if(leaderISO.includes("D")) {
+              leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("P")+1, leaderISO.indexOf("D"));
+              leaderTimePlayed += "d ";
+            }
+            if(leaderISO.includes("H")) {
+              leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("H"));
               leaderTimePlayed += "h ";
-              leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("H")+1, leaderISO.indexOf("M"));
-              leaderTimePlayed += "m";
-            } else if(leaderISO.includes("H") && !leaderISO.includes("M")) {
-              leaderTimePlayed = leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("H"));
-              leaderTimePlayed += "h";
-            } else {
-              leaderTimePlayed = "0m";
+            }
+            if(leaderISO.includes("M")) {
+              if(leaderISO.substring(leaderISO.indexOf("M")-2, leaderISO.indexOf("M")).includes("H") || leaderISO.substring(leaderISO.indexOf("M")-2, leaderISO.indexOf("M")).includes("T")) {
+                leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("M")-1, leaderISO.indexOf("M"));
+                leaderTimePlayed += "m";
+              } else {
+                leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("M")-2, leaderISO.indexOf("M"));
+                leaderTimePlayed += "m";
+              }
             }
             var leaderGamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesStarted;
             var leaderGamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesWon;
@@ -482,19 +493,23 @@ client.on("message", message => {
                 var onesCsr = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Raw;
               }
               var onesISO = parsedData.RankedPlaylistStats[onesIndex].TotalTimePlayed;
-              if(onesISO.includes("H") && onesISO.includes("M")) {
-                var onesTimePlayed = onesISO.substring(onesISO.indexOf("T")+1, onesISO.indexOf("H"));
+              var onesTimePlayed = "";
+              if(onesISO.includes("D")) {
+                onesTimePlayed += onesISO.substring(onesISO.indexOf("P")+1, onesISO.indexOf("D"));
+                onesTimePlayed += "d ";
+              }
+              if(onesISO.includes("H")) {
+                onesTimePlayed += onesISO.substring(onesISO.indexOf("T")+1, onesISO.indexOf("H"));
                 onesTimePlayed += "h ";
-                onesTimePlayed += onesISO.substring(onesISO.indexOf("H")+1, onesISO.indexOf("M"));
-                onesTimePlayed += "m";
-              } else if(onesISO.includes("H") && !onesISO.includes("M")) {
-                var onesTimePlayed = onesISO.substring(onesISO.indexOf("T")+1, onesISO.indexOf("H"));
-                onesTimePlayed += "h";
-              } else if(onesISO.includes("M")) {
-                onesTimePlayed = onesISO.substring(onesISO.indexOf("T")+1, onesISO.indexOf("M"));
-                onesTimePlayed += "m";
-              } else {
-                onesTimePlayed = "0m";
+              }
+              if(onesISO.includes("M")) {
+                if(onesISO.substring(onesISO.indexOf("M")-2, onesISO.indexOf("M")).includes("H") || onesISO.substring(onesISO.indexOf("M")-2, onesISO.indexOf("M")).includes("T")) {
+                  onesTimePlayed += onesISO.substring(onesISO.indexOf("M")-1, onesISO.indexOf("M"));
+                  onesTimePlayed += "m";
+                } else {
+                  onesTimePlayed += onesISO.substring(onesISO.indexOf("M")-2, onesISO.indexOf("M"));
+                  onesTimePlayed += "m";
+                }
               }
               var onesGamesPlayed = parsedData.RankedPlaylistStats[onesIndex].TotalMatchesStarted;
               var onesGamesWon = parsedData.RankedPlaylistStats[onesIndex].TotalMatchesWon;
@@ -561,16 +576,23 @@ client.on("message", message => {
                 var threesCsr = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Raw;
               }
               var threesISO = parsedData.RankedPlaylistStats[threesIndex].TotalTimePlayed
-              if(threesISO.includes("H") && threesISO.includes("M")) {
-                var threesTimePlayed = threesISO.substring(threesISO.indexOf("T")+1, threesISO.indexOf("H"));
+              var threesTimePlayed = "";
+              if(threesISO.includes("D")) {
+                threesTimePlayed += threesISO.substring(threesISO.indexOf("P")+1, threesISO.indexOf("D"));
+                threesTimePlayed += "d ";
+              }
+              if(threesISO.includes("H")) {
+                threesTimePlayed += threesISO.substring(threesISO.indexOf("T")+1, threesISO.indexOf("H"));
                 threesTimePlayed += "h ";
-                threesTimePlayed += threesISO.substring(threesISO.indexOf("H")+1, threesISO.indexOf("M"));
-                threesTimePlayed += "m";
-              } else if(threesISO.includes("H") && !threesISO.includes("M")) {
-                var threesTimePlayed = threesISO.substring(threesISO.indexOf("T")+1, threesISO.indexOf("H"));
-                threesTimePlayed += "h";
-              } else {
-                threesTimePlayed = "0m";
+              }
+              if(threesISO.includes("M")) {
+                if(threesISO.substring(threesISO.indexOf("M")-2, threesISO.indexOf("M")).includes("H") || threesISO.substring(threesISO.indexOf("M")-2, threesISO.indexOf("M")).includes("T")) {
+                  threesTimePlayed += threesISO.substring(threesISO.indexOf("M")-1, threesISO.indexOf("M"));
+                  threesTimePlayed += "m";
+                } else {
+                  threesTimePlayed += threesISO.substring(threesISO.indexOf("M")-2, threesISO.indexOf("M"));
+                  threesTimePlayed += "m";
+                }
               }
               var threesGamesPlayed = parsedData.RankedPlaylistStats[threesIndex].TotalMatchesStarted;
               var threesGamesWon = parsedData.RankedPlaylistStats[threesIndex].TotalMatchesWon;
