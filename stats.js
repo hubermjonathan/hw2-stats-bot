@@ -15,7 +15,6 @@ const auth = require("./auth.json"); //token file for discord
 const fs = require("fs"); //file writing
 const util = require("util"); //string formatting
 const http = require("https"); //api access
-const red = 16711680; //color red
 
 //precision rounding function
 function precisionRound(number, precision) {
@@ -51,6 +50,7 @@ client.on("message", message => {
   }
 
   //event variables
+  const embedcolor = 39423;
   const channel = message.channel;
   const channelID = channel.id;
   const guild = message.guild;
@@ -101,7 +101,7 @@ client.on("message", message => {
           author: {
             name: "Prefix for commands: '~'"
           },
-          color: red,
+          color: embedcolor,
           fields: [
             {
               name: "Commands",
@@ -323,7 +323,7 @@ client.on("message", message => {
               author: {
                 name: "Team War Stats for " + gamertag
               },
-              color: 16711680,
+              color: embedcolor,
               thumbnail: {
                 url: "attachment://leader.png",
                 height: 1920 * .01,
@@ -613,7 +613,7 @@ client.on("message", message => {
               author: {
                 name: "Ranked Stats for " + rankedGamertag
               },
-              color: 16711680,
+              color: embedcolor,
               thumbnail: {
                 url: "attachment://designation.png",
                 height: 1920 * .01,
