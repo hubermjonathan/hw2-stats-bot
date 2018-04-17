@@ -506,7 +506,7 @@ client.on("message", message => {
             }
 
             //create 1v1 message
-            var onesMessage = "Rank: "+ onesRank + " (" + onesRankPercent + "%)" +"\n";
+            var onesMessage = "Rank: "+ onesRank + " " + onesTier + " (" + onesRankPercent + "%)" +"\n";
             onesMessage += "Raw CSR: "+ onesCsr +"\n";
             onesMessage += "Time played: "+ onesTimePlayed +"\n";
             onesMessage += "Games played: "+ onesGamesPlayed +"\n";
@@ -589,7 +589,7 @@ client.on("message", message => {
             }
 
             //create 3v3 message
-            var threesMessage = "Rank: "+ threesRank + " (" + threesRankPercent + "%)" +"\n";
+            var threesMessage = "Rank: "+ threesRank + " " + threesTier + " (" + threesRankPercent + "%)" +"\n";
             threesMessage += "Raw CSR: "+ threesCsr +"\n";
             threesMessage += "Time played: "+ threesTimePlayed +"\n";
             threesMessage += "Games played: "+ threesGamesPlayed +"\n";
