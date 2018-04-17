@@ -447,6 +447,7 @@ client.on("message", message => {
             //check if user has not played games
             if(parsedData.RankedPlaylistStats[onesIndex] == undefined) {
               var onesRank = "Unranked";
+              var onesTier = "";
               var onesRankNumber = 0;
               var onesRankPercent = 0;
               var onesCsr = 0;
@@ -459,13 +460,15 @@ client.on("message", message => {
             } else {
               if(parsedData.RankedPlaylistStats[onesIndex].HighestCsr == null) {
                 var onesRank = "Unranked";
+                var onesTier = "";
                 var onesRankPercent = (parsedData.RankedPlaylistStats[onesIndex].TotalMatchesCompleted / 10) * 100;
                 var onesCsr = 0;
               } else {
                 var onesRankNumber = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Designation;
                 var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
                 var onesRank = ranks[onesRankNumber-1];
-                var onesTier = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Tier;
+                var onesTier = " "
+                onesTier += parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Tier;
                 var onesRankPercent = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.PercentToNextTier;
                 var onesCsr = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Raw;
               }
@@ -506,7 +509,7 @@ client.on("message", message => {
             }
 
             //create 1v1 message
-            var onesMessage = "Rank: "+ onesRank + " " + onesTier + " (" + onesRankPercent + "%)" +"\n";
+            var onesMessage = "Rank: "+ onesRank + onesTier + " (" + onesRankPercent + "%)" +"\n";
             onesMessage += "Raw CSR: "+ onesCsr +"\n";
             onesMessage += "Time played: "+ onesTimePlayed +"\n";
             onesMessage += "Games played: "+ onesGamesPlayed +"\n";
@@ -530,6 +533,7 @@ client.on("message", message => {
             //check if user has not played games
             if(parsedData.RankedPlaylistStats[threesIndex] == undefined) {
               var threesRank = "Unranked";
+              var threesTier = "";
               var threesRankNumber = 0;
               var threesRankPercent = 0;
               var threesCsr = 0;
@@ -542,13 +546,15 @@ client.on("message", message => {
             } else {
               if(parsedData.RankedPlaylistStats[threesIndex].HighestCsr == null) {
                 var threesRank = "Unranked";
+                var threesTier = "";
                 var threesRankPercent = (parsedData.RankedPlaylistStats[threesIndex].TotalMatchesCompleted / 10) * 100;
                 var threesCsr = 0;
               } else {
                 var threesRankNumber = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Designation;
                 var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
                 var threesRank = ranks[threesRankNumber-1];
-                var threesTier = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Tier;
+                var threesTier = " "
+                threesTier += parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Tier;
                 var threesRankPercent = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.PercentToNextTier;
                 var threesCsr = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Raw;
               }
@@ -589,7 +595,7 @@ client.on("message", message => {
             }
 
             //create 3v3 message
-            var threesMessage = "Rank: "+ threesRank + " " + threesTier + " (" + threesRankPercent + "%)" +"\n";
+            var threesMessage = "Rank: "+ threesRank + threesTier + " (" + threesRankPercent + "%)" +"\n";
             threesMessage += "Raw CSR: "+ threesCsr +"\n";
             threesMessage += "Time played: "+ threesTimePlayed +"\n";
             threesMessage += "Games played: "+ threesGamesPlayed +"\n";
