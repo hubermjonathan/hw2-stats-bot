@@ -12,7 +12,7 @@ hw2statsbot is a discord bot that provides statistics for the game halo wars 2</
 ### upcoming features
 none so far, create a request for one if you have an idea
 ### version history
-**1.0.1** - command to reset bot game, changed embed message color
+**1.0.1** - command to reset bot game, changed embed message color</br>
 **1.0.0** - gamertag linking, team war stats, ranked stats
 ### creating your own version
 1. click fork in the upper right hand corner to create a copy of this repo to edit on your own
