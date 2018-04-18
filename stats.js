@@ -117,7 +117,9 @@ client.on("message", message => {
         helpMessage += "**stats** (s): shows halo wars 2 team war stats for a given player\n";
         helpMessage += "usage: ~stats <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows halo wars 2 ranked stats for a given player\n";
-        helpMessage += "usage: ~ranked <gamertag>";
+        helpMessage += "usage: ~ranked <gamertag>\n\n";
+        helpMessage += "**createteams** (ct): create random teams with users in a voice channel\n";
+        helpMessage += "usage: ~createteams";
 
         //check if bot has permission to embed links
         if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
@@ -681,6 +683,7 @@ client.on("message", message => {
       break;
 
       //command: createteams
+      case "ct":
       case "createteams":
         //ensure author is in a voice channel
         if(member.voiceChannel == null) {
