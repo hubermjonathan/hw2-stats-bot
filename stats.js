@@ -22,6 +22,28 @@ function precisionRound(number, precision) {
   return Math.round(number * factor) / factor;
 }
 
+//array shuffling function
+function arrayShuffle(array) {
+  var currentIndex = array.length;
+  var temporaryValue;
+  var randomIndex;
+
+  //run until no elements are left
+  while (0 !== currentIndex) {
+
+    //pick and element
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    //swap
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
 //create bot, login, and set game
 const client = new discord.Client();
 client.login(auth.token);
@@ -57,11 +79,12 @@ client.on("message", message => {
   const guildID = guild.id;
   const user = message.author;
   const userID = user.id;
+  const member = message.member;
   const fileNameUser = util.format("./usersettings/%s.json", userID);
   var usersettings = require(fileNameUser);
 
   //commands section
-  if(message.content.substring(0, 1) == "~") {
+  if(message.content.substring(0, 1) == "!") {
     //command variables
     var args = message.content.substring(1).split(" ");
     var command = args[0];
@@ -98,7 +121,7 @@ client.on("message", message => {
 
         //check if bot has permission to embed links
         if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
-          //send error message for no arguments
+          //send error message for no permissions
           channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
           console.log(util.format("Sent permissions error message to %s.", guild.name));
           return(1);
@@ -172,7 +195,7 @@ client.on("message", message => {
 
         //check for correct argument
         if(gamertag.length > 15) {
-          //send error message for no arguments
+          //send error message for invalid argument
           channel.send(util.format("<@!%s>, that gamertag is too long.", userID));
           console.log(util.format("Sent stats error message to %s.", guild.name));
           return(1);
@@ -211,7 +234,7 @@ client.on("message", message => {
 
             //check if user has not played games
             if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
-              //send error message for no arguments
+              //send error message for invalid gamertag
               channel.send(util.format("<@!%s>, %s has not played any games.", userID, gamertag));
               console.log(util.format("Sent stats error message to %s.", guild.name));
               return(1);
@@ -320,7 +343,7 @@ client.on("message", message => {
 
             //check if bot has permission to embed links
             if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
-              //send error message for no arguments
+              //send error message for no permissions
               channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
               console.log(util.format("Sent permissions error message to %s.", guild.name));
               return(1);
@@ -388,7 +411,7 @@ client.on("message", message => {
 
         //check for correct argument
         if(rankedGamertag.length > 15) {
-          //send error message for no arguments
+          //send error message for invalid gamertag
           channel.send(util.format("<@!%s>, that gamertag is too long.", userID));
           console.log(util.format("Sent ranked error message to %s.", guild.name));
           return(1);
@@ -426,7 +449,7 @@ client.on("message", message => {
             const parsedData = JSON.parse(rawData);
             //check if user has not played games
             if(parsedData.RankedPlaylistStats.length == 0) {
-              //send error message for no arguments
+              //send error message for invalid gamertag
               channel.send(util.format("<@!%s>, %s has not played any games.", userID, rankedGamertag));
               console.log(util.format("Sent ranked error message to %s.", guild.name));
               return(1);
@@ -616,7 +639,7 @@ client.on("message", message => {
 
             //check if bot has permission to embed links
             if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
-              //send error message for no arguments
+              //send error message for no permissions
               channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
               console.log(util.format("Sent permissions error message to %s.", guild.name));
               return(1);
@@ -655,6 +678,89 @@ client.on("message", message => {
             console.log(util.format("Sent ranked message for %s in %s.", rankedGamertag, guild.name));
           });
         });
+      break;
+
+      //command: createteams
+      case "createteams":
+        //ensure author is in a voice channel
+        if(member.voiceChannel == null) {
+          //send error message for invalid channel
+          channel.send(util.format("<@!%s>, you must be in a voice channel to use this command.", userID));
+          console.log(util.format("Sent createteams error message to %s.", guild.name));
+          return(1);
+        }
+
+        //get all members of channel
+        var channelMembers = member.voiceChannel.members.array();
+
+        //ensure there are at least 2 members in the channel
+        if(channelMembers.length < 2) {
+          //send error message for invalid channel
+          channel.send(util.format("<@!%s>, there must be at least 2 people to create teams.", userID));
+          console.log(util.format("Sent createteams error message to %s.", guild.name));
+          return(1);
+        }
+
+        //sort into team 1
+        var team1Members = [];
+        for(var i = 0; i < channelMembers.length/2; i++) {
+          channelMembers = arrayShuffle(channelMembers);
+          team1Members.push(channelMembers.pop());
+        }
+
+        //sort into team 2
+        var team2Members = [];
+        for(var i = 0; i < channelMembers.length; i++) {
+          channelMembers = arrayShuffle(channelMembers);
+          team2Members.push(channelMembers.pop());
+        }
+
+        //create team 1 message
+        var team1Message = "";
+        for(var i = 0; i < team1Members.length; i++) {
+          team1Message += team1Members[i];
+          if(i != team1Members.length - 1) {
+            team1Message += "\n";
+          }
+        }
+
+        //create team 2 message
+        var team2Message = "";
+        for(var i = 0; i < team2Members.length; i++) {
+          team2Message += team2Members[i];
+          if(i != team2Members.length - 1) {
+            team2Message += "\n";
+          }
+        }
+
+        //check if bot has permission to embed links
+        if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
+          //send error message for no permissions
+          channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
+          console.log(util.format("Sent permissions error message to %s.", guild.name));
+          return(1);
+        }
+
+        //send embedded message with teams
+        channel.send({ embed: {
+          author: {
+            name: "Teams"
+          },
+          color: embedcolor,
+          fields: [
+            {
+              name: "Team 1",
+              value: team1Message,
+              inline: true
+            },
+            {
+              name: "Team 2",
+              value: team2Message,
+              inline: true
+            }
+          ]
+        }});
+        console.log(util.format("Sent createteams message to %s.", guild.name));
       break;
 
       //no command
