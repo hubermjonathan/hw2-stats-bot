@@ -114,10 +114,12 @@ client.on("message", message => {
         helpMessage += "usage: ~help\n\n";
         helpMessage += "**link** (l): links your gamertag to your discord account so you don't have to type it to get stats\n";
         helpMessage += "usage: ~link <gamertag>\n\n";
-        helpMessage += "**stats** (s): shows halo wars 2 team war stats for a given player\n";
+        helpMessage += "**stats** (s): shows team war stats for a given player\n";
         helpMessage += "usage: ~stats <gamertag>\n\n";
-        helpMessage += "**ranked** (r): shows halo wars 2 ranked stats for a given player\n";
+        helpMessage += "**ranked** (r): shows ranked stats for a given player\n";
         helpMessage += "usage: ~ranked <gamertag>\n\n";
+        helpMessage += "**leaders**: shows most played leaders in team war for a given player\n";
+        helpMessage += "usage: ~leaders <gamertag>\n\n";
         helpMessage += "**createteams** (ct): create random teams with users in a voice channel\n";
         helpMessage += "usage: ~createteams";
 
@@ -163,6 +165,14 @@ client.on("message", message => {
           gamertagToStore = message.content.substring(6);
         } else if(command == "l") {
           gamertagToStore = message.content.substring(3);
+        }
+
+        //check for correct argument
+        if(gamertagToStore.length > 15) {
+          //send error message for invalid argument
+          channel.send(util.format("<@!%s>, that gamertag is too long.", userID));
+          console.log(util.format("Sent link error message to %s.", guild.name));
+          return(1);
         }
 
         //change gamertag in user settings
@@ -764,6 +774,157 @@ client.on("message", message => {
           ]
         }});
         console.log(util.format("Sent createteams message to %s.", guild.name));
+      break;
+
+      //command: leaders
+      case "leaders":
+        //check for correct arguments
+        if(args[0] == null && usersettings.gamertag == null) {
+          //send error message for no arguments
+          channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", userID));
+          console.log(util.format("Sent leaders error message to %s.", guild.name));
+          return(1);
+        }
+
+        //get gamertag
+        let leadersGamertag;
+        if(args[0] == null) {
+          leadersGamertag = usersettings.gamertag;
+        } else if(command == "leaders") {
+          leadersGamertag = message.content.substring(9);
+        }
+
+        //check for correct argument
+        if(leadersGamertag.length > 15) {
+          //send error message for invalid argument
+          channel.send(util.format("<@!%s>, that gamertag is too long.", userID));
+          console.log(util.format("Sent leaders error message to %s.", guild.name));
+          return(1);
+        }
+
+        //format gamertags with spaces
+        let leadersGamertagFormatted = leadersGamertag.replace(/ /g, "%20");
+
+        //information to connect to haloapi
+        const loptions = {
+          hostname: "www.haloapi.com",
+          path: util.format("/stats/hw2/players/%s/stats?", leadersGamertagFormatted),
+          headers: {
+            "Ocp-Apim-Subscription-Key": auth.key
+          }
+        };
+
+        //get request
+        http.get(loptions, (res) => {
+          //check for valid gamertag
+          if (res.statusCode == 404) {
+            //send error message for invalid gamertag
+            channel.send(util.format("<@!%s>, that gamertag does not exist.", userID));
+            console.log(util.format("Sent leaders error message to %s.", guild.name));
+            return(1);
+          }
+
+          //get user stats from api
+          var rawData = "";
+          res.on("data", (chunk) => { rawData += chunk; });
+
+          //create and send message when all data is received
+          res.on("end", () => {
+            //parse data
+            const parsedData = JSON.parse(rawData);
+
+            //check if user has not played games
+            if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
+              //send error message for invalid gamertag
+              channel.send(util.format("<@!%s>, %s has not played any games.", userID, leadersGamertag));
+              console.log(util.format("Sent leaders error message to %s.", guild.name));
+              return(1);
+            }
+
+            //find correct index
+            var index = -1;
+            for(var i = 0; i < parsedData.MatchmakingSummary.SocialPlaylistStats.length; i++) {
+              //find team war id
+              if(parsedData.MatchmakingSummary.SocialPlaylistStats[i].PlaylistId == "282fc197-7bf1-4865-81ec-a312d07567b6") {
+                index = i;
+                break;
+              }
+            }
+
+            //get data for leaders
+            var max = -1;
+            var mid = -1;
+            var min = -1;
+            var maxLeader = "";
+            var midLeader = "";
+            var minLeader = "";
+            for(var leader in parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats) {
+              if(parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted > max) {
+                max = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted;
+                maxLeader = leader;
+                if(maxLeader == "Lekgolo") {
+                  maxLeader = "Colony"
+                }
+              } else if(parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted > mid) {
+                mid = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted;
+                midLeader = leader;
+                if(midLeader == "Lekgolo") {
+                  midLeader = "Colony"
+                }
+              } else if(parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted > min) {
+                min = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted;
+                minLeader = leader;
+                if(minLeader == "Lekgolo") {
+                  minLeader = "Colony"
+                }
+              }
+            }
+
+            //check if bot has permission to embed links
+            if(!guild.me.permissionsIn(channel).has("EMBED_LINKS")) {
+              //send error message for no permissions
+              channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", userID));
+              console.log(util.format("Sent permissions error message to %s.", guild.name));
+              return(1);
+            }
+
+            //send embedded message with stats
+            channel.send({ embed: {
+              author: {
+                name: "Leader Stats for " + leadersGamertag
+              },
+              color: embedcolor,
+              thumbnail: {
+                url: "attachment://leader.png",
+                height: 1920 * .01,
+                width: 1452 * .01
+              },
+              fields: [
+                {
+                  name: maxLeader,
+                  value: "Games played: " + max,
+                  inline: false
+                },
+                {
+                  name: midLeader,
+                  value: "Games played: " + mid,
+                  inline: false
+                },
+                {
+                  name: minLeader,
+                  value: "Games played: " + min,
+                  inline: false
+                }
+              ]
+            }, files: [
+              {
+                attachment: util.format("./assets/leaderpictures/%s.png", maxLeader),
+                name: "leader.png"
+              }
+            ]});
+            console.log(util.format("Sent leaders message for %s in %s.", leadersGamertag, guild.name));
+          });
+        });
       break;
 
       //no command
