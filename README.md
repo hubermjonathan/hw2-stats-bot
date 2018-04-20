@@ -1,6 +1,5 @@
-</img src="assets/logo.png" alt="alt text" width="100px" height="100px">
 # hw2statsbot
-**v1.0.3**</br>
+<img src="assets/logo.png" alt="logo" width="100px" height="100px"> **v1.0.3**</br>
 hw2statsbot is a discord bot that provides statistics for the game halo wars 2</br>
 [main code](stats.js) | [author](#author)
 
