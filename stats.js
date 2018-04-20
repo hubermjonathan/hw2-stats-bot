@@ -84,7 +84,7 @@ client.on("message", message => {
   var usersettings = require(fileNameUser);
 
   //commands section
-  if(message.content.substring(0, 1) == "~") {
+  if(message.content.substring(0, 1) == "!") {
     //command variables
     var args = message.content.substring(1).split(" ");
     var command = args[0];
@@ -400,7 +400,7 @@ client.on("message", message => {
         });
       break;
 
-      //command: stats
+      //command: ranked
       case "r":
       case "ranked":
         //check for correct arguments
@@ -704,10 +704,10 @@ client.on("message", message => {
         }
 
         //get all members of channel
-        var channelMembers = member.voiceChannel.members.array();
+        var channelMembers = member.voiceChannel.members.clone();
 
         //ensure there are at least 2 members in the channel
-        if(channelMembers.length < 2) {
+        if(channelMembers.size < 2) {
           //send error message for invalid channel
           channel.send(util.format("<@!%s>, there must be at least 2 people to create teams.", userID));
           console.log(util.format("Sent createteams error message to %s.", guild.name));
@@ -716,16 +716,20 @@ client.on("message", message => {
 
         //sort into team 1
         var team1Members = [];
-        for(var i = 0; i < channelMembers.length/2; i++) {
-          channelMembers = arrayShuffle(channelMembers);
-          team1Members.push(channelMembers.pop());
+        for(var i = 0; i < (channelMembers.size/2)+1; i++) {
+          var key = channelMembers.randomKey();
+          var value = channelMembers.get(key);
+          team1Members.push(value);
+          channelMembers.delete(key);
         }
 
         //sort into team 2
         var team2Members = [];
-        for(var i = 0; i < channelMembers.length; i++) {
-          channelMembers = arrayShuffle(channelMembers);
-          team2Members.push(channelMembers.pop());
+        for(var i = 0; i < channelMembers.size; i++) {
+          var key = channelMembers.randomKey();
+          var value = channelMembers.get(key);
+          team2Members.push(value);
+          channelMembers.delete(key);
         }
 
         //create team 1 message
@@ -774,6 +778,18 @@ client.on("message", message => {
           ]
         }});
         console.log(util.format("Sent createteams message to %s.", guild.name));
+      break;
+
+      case "join":
+        if(userID == "196141424318611457") {
+          guild.channels.get("407052035259629571").join();
+        }
+      break;
+
+      case "leave":
+        if(userID == "196141424318611457") {
+          guild.channels.get("407052035259629571").leave();
+        }
       break;
 
       //command: leaders
