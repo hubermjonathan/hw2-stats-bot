@@ -84,7 +84,7 @@ client.on("message", message => {
   var usersettings = require(fileNameUser);
 
   //commands section
-  if(message.content.substring(0, 1) == "!") {
+  if(message.content.substring(0, 1) == "~") {
     //command variables
     var args = message.content.substring(1).split(" ");
     var command = args[0];
@@ -778,18 +778,6 @@ client.on("message", message => {
           ]
         }});
         console.log(util.format("Sent createteams message to %s.", guild.name));
-      break;
-
-      case "join":
-        if(userID == "196141424318611457") {
-          guild.channels.get("407052035259629571").join();
-        }
-      break;
-
-      case "leave":
-        if(userID == "196141424318611457") {
-          guild.channels.get("407052035259629571").leave();
-        }
       break;
 
       //command: leaders
