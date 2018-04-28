@@ -90,7 +90,7 @@ client.on("message", message => {
   var usersettings = require(fileNameUser);
 
   //commands section
-  if(message.content.substring(0, 1) == "~") {
+  if(message.content.substring(0, 1) == "!") {
     //command variables
     var args = message.content.substring(1).split(" ");
     var command = args[0];
@@ -500,10 +500,14 @@ client.on("message", message => {
                 var onesRankNumber = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Designation;
                 var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
                 var onesRank = ranks[onesRankNumber-1];
-                var onesTier = " "
-                onesTier += parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Tier;
                 var onesRankPercent = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.PercentToNextTier;
                 var onesCsr = parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Raw;
+                var onesTier = " ";
+                if(onesRank == "Champion") {
+                  onesTier += parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Rank;
+                } else if(onesRank != "Onyx") {
+                  onesTier += parsedData.RankedPlaylistStats[onesIndex].HighestCsr.Tier;
+                }
               }
               var onesISO = parsedData.RankedPlaylistStats[onesIndex].TotalTimePlayed;
               var onesTimePlayed = "";
@@ -586,10 +590,14 @@ client.on("message", message => {
                 var threesRankNumber = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Designation;
                 var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
                 var threesRank = ranks[threesRankNumber-1];
-                var threesTier = " "
-                threesTier += parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Tier;
                 var threesRankPercent = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.PercentToNextTier;
                 var threesCsr = parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Raw;
+                var threesTier = " ";
+                if(threesRank == "Champion") {
+                  threesTier += parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Rank;
+                } else if(threesRank != "Onyx") {
+                  threesTier += parsedData.RankedPlaylistStats[threesIndex].HighestCsr.Tier;
+                }
               }
               var threesISO = parsedData.RankedPlaylistStats[threesIndex].TotalTimePlayed
               var threesTimePlayed = "";
