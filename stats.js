@@ -50,6 +50,8 @@ client.login(auth.token);
 client.on("ready", () => {
   console.log(util.format("Logged in and running as %s.", client.user.username));
   client.user.setActivity("~help");
+  var amtServers = client.guilds.size;
+  client.user.setActivity(util.format("~help on %d servers", amtServers));
 });
 
 //execute user given commands
@@ -70,6 +72,10 @@ client.on("message", message => {
     fs.writeFileSync(util.format("./usersettings/%s.json", message.author.id), jsonUserValues);
     console.log(util.format("User settings created for %s.", message.author.username));
   }
+
+  //update games message
+  amtServers = client.guilds.size;
+  client.user.setActivity(util.format("~help on %d servers", amtServers));
 
   //event variables
   const embedcolor = 39423;
