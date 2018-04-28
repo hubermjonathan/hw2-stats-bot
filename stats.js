@@ -98,14 +98,6 @@ client.on("message", message => {
 
     //determine the command
     switch(command) {
-      //command: game
-      case "game":
-        if(userID == "196141424318611457") {
-          client.user.setActivity("~help");
-          console.log("Reset bot game");
-        }
-      break;
-
       //command: ping
       case "ping":
         channel.send("pong~");
