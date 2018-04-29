@@ -107,7 +107,7 @@ client.on("message", message => {
           author: {
             name: "Prefix for commands: '~'"
           },
-          color: embedcolor,
+          color: eventVariables.embedcolor,
           fields: [
             {
               name: "Commands",
@@ -417,7 +417,7 @@ client.on("message", message => {
               author: {
                 name: "Leader Stats for " + leadersGamertag
               },
-              color: embedcolor,
+              color: eventVariables.embedcolor,
               thumbnail: {
                 url: "attachment://leader.png",
                 height: 1920 * .01,
