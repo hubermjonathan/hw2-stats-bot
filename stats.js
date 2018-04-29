@@ -90,11 +90,9 @@ client.on("message", message => {
         helpMessage += "**stats** (s): shows team war stats for a given player\n";
         helpMessage += "usage: ~stats <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows ranked stats for a given player\n";
-        helpMessage += "usage: ~ranked <gamertag>\n\n";
+        helpMessage += "usage: ~ranked <1x/3x/2/3> <gamertag>\n\n";
         helpMessage += "**leaders**: shows most played leaders in team war for a given player\n";
-        helpMessage += "usage: ~leaders <gamertag>\n\n";
-        helpMessage += "**createteams** (ct): create random teams with users in a voice channel\n";
-        helpMessage += "usage: ~createteams";
+        helpMessage += "usage: ~leaders <gamertag>";
 
         //check if bot has permission to embed links
         if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
@@ -372,11 +370,11 @@ client.on("message", message => {
         //check for incorrecct playlist
         if(playlistRanked == null) {
           //send error message for no playlist
-          eventVariables.channel.send(util.format("<@!%s>, provide a ranked playlist (1X, 3X, 2, or 3).", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: ~r <1x/3x/2/3> <gamertag>", eventVariables.userID));
           return(1);
         } else if(playlistRanked.toUpperCase() != "1X" && playlistRanked.toUpperCase() != "3X" && playlistRanked.toUpperCase() != "2" && playlistRanked.toUpperCase() != "3") {
           //send error message for incorrect playlist
-          eventVariables.channel.send(util.format("<@!%s>, enter a correct ranked playlist (1X, 3X, 2, or 3).", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: ~r <1x/3x/2/3> <gamertag>", eventVariables.userID));
           return(1);
         }
 

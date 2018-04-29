@@ -1,5 +1,5 @@
 # hw2statsbot
-**v1.0.3** <img src="assets/logo.png" align="right" alt="logo" width="200px" height="200px"></br>
+**v1.1.0** <img src="assets/logo.png" align="right" alt="logo" width="200px" height="200px"></br>
 hw2statsbot is a discord bot that provides statistics for the game halo wars 2</br>
 [main code](stats.js) | [author](#author)
 
@@ -13,8 +13,9 @@ hw2statsbot is a discord bot that provides statistics for the game halo wars 2</
 ### upcoming features
 add leader stats from ranked into leaders command
 ### version history
+**1.1.0** - added argument to get desired playlist stats (1x/3x/2/3), added mmr and current rank (rather than highest rank), bug fixes</br>
 **1.0.3** - command to get most played leaders in team war, bug fixes</br>
-**1.0.2** - command to create random teams, added tier (plat 2, gold 3, etc.) to ranked stats</br>
+**1.0.2** - added tier (plat 2, gold 3, etc.) to ranked stats</br>
 **1.0.1** - command to reset bot game, changed embed message color</br>
 **1.0.0** - gamertag linking, team war stats, ranked stats
 ### creating your own version
