@@ -17,6 +17,7 @@ const util = require("util"); //string formatting
 const http = require("https"); //api access
 const helperFunctions = require("./functions/helperFunctions"); //helper functions file
 const rankedFunctions = require("./functions/rankedFunctions"); //ranked functions file
+const unrankedFunctions = require("./functions/unrankedFunctions"); //unranked functions file
 
 //create bot, login, and set game
 const client = new discord.Client();
@@ -87,8 +88,8 @@ client.on("message", message => {
         helpMessage += "usage: ~help\n\n";
         helpMessage += "**link** (l): links your gamertag to your discord account so you don't have to type it to get stats\n";
         helpMessage += "usage: ~link <gamertag>\n\n";
-        helpMessage += "**stats** (s): shows team war stats for a given player\n";
-        helpMessage += "usage: ~stats <gamertag>\n\n";
+        helpMessage += "**unranked** (ur): shows team war stats for a given player\n";
+        helpMessage += "usage: ~unranked <teamwar> <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows ranked stats for a given player\n";
         helpMessage += "usage: ~ranked <1x/3x/2/3> <gamertag>\n\n";
         helpMessage += "**leaders**: shows most played leaders in team war for a given player\n";
@@ -151,9 +152,24 @@ client.on("message", message => {
       break;
 
       //command: stats
-      case "s":
-      case "stats":
-        //check for correct arguments
+      case "ur":
+      case "unranked":
+        //get playlist
+        var playlistUnranked = args[0];
+        args = args.splice(1);
+
+        //check for incorrecct playlist
+        if(playlistUnranked == null) {
+          //send error message for no playlist
+          eventVariables.channel.send(util.format("<@!%s>, usage: ~unranked <teamwar> <gamertag>", eventVariables.userID));
+          return(1);
+        } else if(playlistUnranked.toUpperCase() != "TEAMWAR") {
+          //send error message for incorrect playlist
+          eventVariables.channel.send(util.format("<@!%s>, usage: ~unranked <teamwar> <gamertag>", eventVariables.userID));
+          return(1);
+        }
+
+        //check for non-linked gamertag
         if(args[0] == null && usersettings.gamertag == null) {
           //send error message for no arguments
           eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
@@ -161,203 +177,37 @@ client.on("message", message => {
         }
 
         //get gamertag
-        let gamertag;
+        let gamertagUnranked;
         if(args[0] == null) {
-          gamertag = usersettings.gamertag;
-        } else if(command == "stats") {
-          gamertag = message.content.substring(7);
-        } else if(command == "s") {
-          gamertag = message.content.substring(3);
+          gamertagUnranked = usersettings.gamertag;
+        } else {
+          gamertagUnranked = args[0];
         }
 
         //check for correct argument
-        if(gamertag.length > 15) {
-          //send error message for invalid argument
+        if(gamertagUnranked.length > 15) {
+          //send error message for invalid gamertag
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
           return(1);
         }
 
         //format gamertags with spaces
-        let gamertagFormatted = gamertag.replace(/ /g, "%20");
+        let gamertagUnrankedFormatted = gamertagUnranked.replace(/ /g, "%20");
 
-        //information to connect to haloapi
-        const options = {
-          hostname: "www.haloapi.com",
-          path: util.format("/stats/hw2/players/%s/stats?", gamertagFormatted),
-          headers: {
-            "Ocp-Apim-Subscription-Key": auth.key
-          }
-        };
-
-        //get request
-        http.get(options, (res) => {
-          //check for valid gamertag
-          if (res.statusCode == 404) {
-            //send error message for invalid gamertag
-            eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
-            return(1);
-          }
-
-          //get user stats from api
-          var rawData = "";
-          res.on("data", (chunk) => { rawData += chunk; });
-
-          //create and send message when all data is received
-          res.on("end", () => {
-            //parse data
-            const parsedData = JSON.parse(rawData);
-
-            //check if user has not played games
-            if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
-              //send error message for invalid gamertag
-              eventVariables.channel.send(util.format("<@!%s>, %s has not played any games.", eventVariables.userID, gamertag));
-              return(1);
+        //call unranked function
+        if(playlistUnranked.toUpperCase() == "TEAMWAR") {
+          //information to connect to haloapi
+          const optionsTeamWar = {
+            hostname: "www.haloapi.com",
+            path: util.format("/stats/hw2/players/%s/stats?", gamertagUnrankedFormatted),
+            headers: {
+              "Ocp-Apim-Subscription-Key": auth.key
             }
+          };
 
-            //find correct index
-            var index = -1;
-            for(var i = 0; i < parsedData.MatchmakingSummary.SocialPlaylistStats.length; i++) {
-              //find team war id
-              if(parsedData.MatchmakingSummary.SocialPlaylistStats[i].PlaylistId == "282fc197-7bf1-4865-81ec-a312d07567b6") {
-                index = i;
-                break;
-              }
-            }
-
-            //get data for games section
-            var timeISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalTimePlayed;
-            var timePlayed = "";
-            if(timeISO.includes("D")) {
-              timePlayed += timeISO.substring(timeISO.indexOf("P")+1, timeISO.indexOf("D"));
-              timePlayed += "d ";
-            }
-            if(timeISO.includes("H")) {
-              timePlayed += timeISO.substring(timeISO.indexOf("T")+1, timeISO.indexOf("H"));
-              timePlayed += "h ";
-            }
-            if(timeISO.includes("M")) {
-              if(timeISO.substring(timeISO.indexOf("M")-2, timeISO.indexOf("M")).includes("H") || timeISO.substring(timeISO.indexOf("M")-2, timeISO.indexOf("M")).includes("T")) {
-                timePlayed += timeISO.substring(timeISO.indexOf("M")-1, timeISO.indexOf("M"));
-                timePlayed += "m";
-              } else {
-                timePlayed += timeISO.substring(timeISO.indexOf("M")-2, timeISO.indexOf("M"));
-                timePlayed += "m";
-              }
-            }
-            var gamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesStarted;
-            var gamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesWon;
-            var gamesLost = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesLost;
-            var winPercent = helperFunctions.precisionRound((gamesWon / gamesPlayed) * 100, 2);
-
-            //create games message
-            var gamesMessage = "Time played: "+ timePlayed +"\n";
-            gamesMessage += "Games played: "+ gamesPlayed +"\n";
-            gamesMessage += "Games won: "+ gamesWon +"\n";
-            gamesMessage += "Games lost: "+ gamesLost +"\n";
-            gamesMessage += "Win percentage: "+ winPercent +"%";
-
-            //get data for leader section
-            var max = -1;
-            var favoriteLeader = "";
-            for(var leader in parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats) {
-              if(parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted > max) {
-                max = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted;
-                favoriteLeader = leader;
-              }
-            }
-            var leaderISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalTimePlayed;
-            var leaderTimePlayed = "";
-            if(leaderISO.includes("D")) {
-              leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("P")+1, leaderISO.indexOf("D"));
-              leaderTimePlayed += "d ";
-            }
-            if(leaderISO.includes("H")) {
-              leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("T")+1, leaderISO.indexOf("H"));
-              leaderTimePlayed += "h ";
-            }
-            if(leaderISO.includes("M")) {
-              if(leaderISO.substring(leaderISO.indexOf("M")-2, leaderISO.indexOf("M")).includes("H") || leaderISO.substring(leaderISO.indexOf("M")-2, leaderISO.indexOf("M")).includes("T")) {
-                leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("M")-1, leaderISO.indexOf("M"));
-                leaderTimePlayed += "m";
-              } else {
-                leaderTimePlayed += leaderISO.substring(leaderISO.indexOf("M")-2, leaderISO.indexOf("M"));
-                leaderTimePlayed += "m";
-              }
-            }
-            var leaderGamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesStarted;
-            var leaderGamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesWon;
-            var leaderWinPercent = helperFunctions.precisionRound((leaderGamesWon / leaderGamesPlayed) * 100, 2);
-            var leaderPowersUsed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalLeaderPowersCast;
-            if(favoriteLeader == "Lekgolo") {
-              favoriteLeader = "Colony"
-            }
-
-            //create leader message
-            var leaderMessage = "Time played: "+ leaderTimePlayed +"\n";
-            leaderMessage += "Games played: "+ leaderGamesPlayed +"\n";
-            leaderMessage += "Games won: "+ leaderGamesWon +"\n";
-            leaderMessage += "Win percentage: "+ leaderWinPercent +"%\n";
-            leaderMessage += "Leader powers used: "+ leaderPowersUsed;
-
-            //get data for units section
-            var unitsBuilt = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsBuilt;
-            var unitsLost = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsLost;
-            var unitsDestroyed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalUnitsDestroyed;
-            if(unitsLost != 0) {
-              var unitsKD = helperFunctions.precisionRound((unitsDestroyed / unitsLost), 2);
-            } else {
-              var unitsKD = "Infinity";
-            }
-
-            //create units message
-            var unitsMessage = "Units built: "+ unitsBuilt +"\n";
-            unitsMessage += "Units lost: "+ unitsLost +"\n";
-            unitsMessage += "Units destroyed: "+ unitsDestroyed +"\n";
-            unitsMessage += "Units K/D ratio: "+ unitsKD;
-
-            //check if bot has permission to embed links
-            if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-              //send error message for no permissions
-              eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-              return(1);
-            }
-
-            //send embedded message with stats
-            eventVariables.channel.send({ embed: {
-              author: {
-                name: "X Team War Stats for " + gamertag
-              },
-              color: embedcolor,
-              thumbnail: {
-                url: "attachment://leader.png",
-                height: 1920 * .01,
-                width: 1452 * .01
-              },
-              fields: [
-                {
-                  name: "Games",
-                  value: gamesMessage,
-                  inline: true
-                },
-                {
-                  name: "Favorite Leader: " + favoriteLeader,
-                  value: leaderMessage,
-                  inline: true
-                },
-                {
-                  name: "Units",
-                  value: unitsMessage,
-                  inline: true
-                }
-              ]
-            }, files: [
-              {
-                attachment: util.format("./assets/leaderpictures/%s.png", favoriteLeader),
-                name: "leader.png"
-              }
-            ]});
-          });
-        });
+          //print data from api
+          unrankedFunctions.getTeamWar(optionsTeamWar, eventVariables, gamertagUnranked);
+        }
       break;
 
       //command: ranked
@@ -370,11 +220,11 @@ client.on("message", message => {
         //check for incorrecct playlist
         if(playlistRanked == null) {
           //send error message for no playlist
-          eventVariables.channel.send(util.format("<@!%s>, usage: ~r <1x/3x/2/3> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3> <gamertag>", eventVariables.userID));
           return(1);
         } else if(playlistRanked.toUpperCase() != "1X" && playlistRanked.toUpperCase() != "3X" && playlistRanked.toUpperCase() != "2" && playlistRanked.toUpperCase() != "3") {
           //send error message for incorrect playlist
-          eventVariables.channel.send(util.format("<@!%s>, usage: ~r <1x/3x/2/3> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3> <gamertag>", eventVariables.userID));
           return(1);
         }
 
@@ -389,9 +239,7 @@ client.on("message", message => {
         let gamertagRanked;
         if(args[0] == null) {
           gamertagRanked = usersettings.gamertag;
-        } else if(command == "ranked") {
-          gamertagRanked = args[0];
-        } else if(command == "r") {
+        } else {
           gamertagRanked = args[0];
         }
 

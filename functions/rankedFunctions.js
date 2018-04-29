@@ -153,9 +153,6 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
 
             //send embedded message with stats
             eventVariables.channel.send({ embed: {
-              author: {
-                name: "Ranked Stats for " + gamertag
-              },
               color: eventVariables.embedcolor,
               thumbnail: {
                 url: "attachment://designation.png",
@@ -164,7 +161,7 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
               },
               fields: [
                 {
-                  name: "1v1 X War",
+                  name: "Ranked 1v1 X War",
                   value: message,
                   inline: true
                 }
@@ -332,9 +329,6 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
 
             //send embedded message with stats
             eventVariables.channel.send({ embed: {
-              author: {
-                name: "Ranked Stats for " + gamertag
-              },
               color: eventVariables.embedcolor,
               thumbnail: {
                 url: "attachment://designation.png",
@@ -343,7 +337,7 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
               },
               fields: [
                 {
-                  name: "3v3 X War",
+                  name: "Ranked 3v3 X War",
                   value: message,
                   inline: true
                 }
@@ -511,9 +505,6 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
             //send embedded message with stats
             eventVariables.channel.send({ embed: {
-              author: {
-                name: "Ranked Stats for " + gamertag
-              },
               color: eventVariables.embedcolor,
               thumbnail: {
                 url: "attachment://designation.png",
@@ -522,7 +513,7 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
               },
               fields: [
                 {
-                  name: "Xbox 2v2 War",
+                  name: "Ranked Xbox 2v2 War",
                   value: message,
                   inline: true
                 }
@@ -690,9 +681,6 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
             //send embedded message with stats
             eventVariables.channel.send({ embed: {
-              author: {
-                name: "Ranked Stats for " + gamertag
-              },
               color: eventVariables.embedcolor,
               thumbnail: {
                 url: "attachment://designation.png",
@@ -701,7 +689,7 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
               },
               fields: [
                 {
-                  name: "Xbox 3v3 War",
+                  name: "Ranked Xbox 3v3 War",
                   value: message,
                   inline: true
                 }

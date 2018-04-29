@@ -7,13 +7,13 @@ hw2statsbot is a discord bot that provides statistics for the game halo wars 2</
 [click here](https://discordapp.com/oauth2/authorize?client_id=431499279782117386&scope=bot)
 ### current features
 **gamertag linking** - link your gamertag to your discord account so you don't have to type it everytime you want your stats</br>
-**team war stats** - get stats for team war like total games, win percentage, and favorite leader</br>
-**ranked stats** - get stats for 1v1 ranked and 3v3 ranked like rank, csr, and win percentage</br>
-**leader stats** - get most played leaders in team war
+**unranked stats** - get stats for unranked playlists like total games, win percentage, and favorite leader</br>
+**ranked stats** - get stats for ranked playlists like rank, csr, mmr, and win percentage</br>
+**leader stats** - get most played leaders
 ### upcoming features
-add leader stats from ranked into leaders command
+add last build order command
 ### version history
-**1.1.0** - added argument to get desired playlist stats (1x/3x/2/3), added mmr and current rank (rather than highest rank), bug fixes</br>
+**1.1.0** - added argument to get desired playlist stats (1x/3x/2/3/etc), added mmr and current rank (rather than highest rank), bug fixes</br>
 **1.0.3** - command to get most played leaders in team war, bug fixes</br>
 **1.0.2** - added tier (plat 2, gold 3, etc.) to ranked stats</br>
 **1.0.1** - command to reset bot game, changed embed message color</br>
