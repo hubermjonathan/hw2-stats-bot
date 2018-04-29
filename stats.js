@@ -6,7 +6,9 @@ by jon huber
 
 /*
 TODO:
-  look for ways to break program
+  look for ways to break bot
+  add overall rank for season
+  change leaders command to include data from all playlists
 */
 
 //setup variables
@@ -91,7 +93,7 @@ client.on("message", message => {
         helpMessage += "**unranked** (ur): shows team war stats for a given player\n";
         helpMessage += "usage: ~unranked <teamwar> <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows ranked stats for a given player\n";
-        helpMessage += "usage: ~ranked <1x/3x/2/3> <gamertag>\n\n";
+        helpMessage += "usage: ~ranked <1x/3x/2/3/overall> <gamertag>\n\n";
         helpMessage += "**leaders**: shows most played leaders in team war for a given player\n";
         helpMessage += "usage: ~leaders <gamertag>";
 
@@ -181,7 +183,7 @@ client.on("message", message => {
         if(args[0] == null) {
           gamertagUnranked = usersettings.gamertag;
         } else {
-          gamertagUnranked = args[0];
+          gamertagUnranked = args.join(" ");
         }
 
         //check for correct argument
@@ -220,11 +222,11 @@ client.on("message", message => {
         //check for incorrecct playlist
         if(playlistRanked == null) {
           //send error message for no playlist
-          eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
           return(1);
-        } else if(playlistRanked.toUpperCase() != "1X" && playlistRanked.toUpperCase() != "3X" && playlistRanked.toUpperCase() != "2" && playlistRanked.toUpperCase() != "3") {
+        } else if(playlistRanked.toUpperCase() != "1X" && playlistRanked.toUpperCase() != "3X" && playlistRanked.toUpperCase() != "2" && playlistRanked.toUpperCase() != "3" && playlistRanked.toUpperCase() != "OVERALL") {
           //send error message for incorrect playlist
-          eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
           return(1);
         }
 
@@ -240,7 +242,7 @@ client.on("message", message => {
         if(args[0] == null) {
           gamertagRanked = usersettings.gamertag;
         } else {
-          gamertagRanked = args[0];
+          gamertagRanked = args.join(" ");
         }
 
         //check for correct argument
@@ -278,7 +280,7 @@ client.on("message", message => {
 
           //print data from api
           rankedFunctions.get3X(options3X, eventVariables, gamertagRanked, gamertagRankedFormatted);
-        } else if(playlistRanked == "2") {
+        } else if(playlistRanked.toUpperCase() == "2") {
           //information to connect to haloapi
           const options2 = {
             hostname: "www.haloapi.com",
@@ -290,7 +292,7 @@ client.on("message", message => {
 
           //print data from api
           rankedFunctions.get2(options2, eventVariables, gamertagRanked, gamertagRankedFormatted);
-        } else if(playlistRanked == "3") {
+        } else if(playlistRanked.toUpperCase() == "3") {
           //information to connect to haloapi
           const options3 = {
             hostname: "www.haloapi.com",
@@ -302,6 +304,18 @@ client.on("message", message => {
 
           //print data from api
           rankedFunctions.get3(options3, eventVariables, gamertagRanked, gamertagRankedFormatted);
+        } else if(playlistRanked.toUpperCase() == "OVERALL") {
+          //information to connect to haloapi
+          const optionsOverall = {
+            hostname: "www.haloapi.com",
+            path: util.format("/stats/hw2/players/%s/stats/seasons/current", gamertagRankedFormatted),
+            headers: {
+              "Ocp-Apim-Subscription-Key": auth.key
+            }
+          };
+
+          //print data from api
+          rankedFunctions.getOverall(optionsOverall, eventVariables, gamertagRanked, gamertagRankedFormatted);
         }
       break;
 

@@ -1,6 +1,6 @@
 {
   "name": "hw2statsbot",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "discord bot written in node.js using discord.js that provides stats of players for halo wars 2",
   "main": "stats.js",
   "author": "Jon Huber",

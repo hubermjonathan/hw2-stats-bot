@@ -219,7 +219,7 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
       //check if user has not played games
       if(parsedData.RankedPlaylistStats[index] == undefined) {
         //send error message for invalid gamertag
-        eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of 1v1 X War.", eventVariables.userID, gamertag));
+        eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of 3v3 X War.", eventVariables.userID, gamertag));
         return(1);
       } else {
         //get and format time played
@@ -395,7 +395,7 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
       //check if user has not played games
       if(parsedData.RankedPlaylistStats[index] == undefined) {
         //send error message for invalid gamertag
-        eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of 1v1 X War.", eventVariables.userID, gamertag));
+        eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of Xbox 2v2 War.", eventVariables.userID, gamertag));
         return(1);
       } else {
         //get and format time played
@@ -571,7 +571,7 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
       //check if user has not played games
       if(parsedData.RankedPlaylistStats[index] == undefined) {
         //send error message for invalid gamertag
-        eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of 1v1 X War.", eventVariables.userID, gamertag));
+        eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of Xbox 3v3 War.", eventVariables.userID, gamertag));
         return(1);
       } else {
         //get and format time played
@@ -708,7 +708,110 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
   });
 }
 
+var getOverall = function(options, eventVariables, gamertag) {
+  //get request
+  http.get(options, (res) => {
+    //check for valid gamertag
+    if (res.statusCode == 404) {
+      //send error message for invalid gamertag
+      eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
+      return(1);
+    }
+
+    //get user stats
+    var rawData = "";
+    res.on("data", (chunk) => { rawData += chunk; });
+
+    //create and send message when all data is received
+    res.on("end", () => {
+      //parse data
+      const parsedData = JSON.parse(rawData);
+
+      //get data for each playlist
+      var messageFields = [];
+      var highestDesignation = 0;
+      for(var i = 0; i < parsedData.RankedPlaylistStats.length; i++) {
+        //add data if user was placed
+        if(parsedData.RankedPlaylistStats[i].HighestCsr != null) {
+          //get name of playlist
+          let playlistName;
+          if(parsedData.RankedPlaylistStats[i].PlaylistId == "548d864e-8666-430e-9140-8dd2ad8fbfcd") {
+            playlistName = "Ranked 1v1 X War";
+          } else if(parsedData.RankedPlaylistStats[i].PlaylistId == "4a2cedcc-9098-4728-886f-60649896278d") {
+            playlistName = "Ranked 3v3 X War";
+          } else if(parsedData.RankedPlaylistStats[i].PlaylistId == "7c625f1c-4c66-4484-8cde-a261e3b4d104") {
+            playlistName = "Ranked Xbox 2v2 War";
+          } else if(parsedData.RankedPlaylistStats[i].PlaylistId == "fe8e1773-adc6-43d0-a23f-4599987ce0f4") {
+            playlistName = "Ranked Xbox 3v3 War";
+          }
+
+          //get rank
+          var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
+          var rankNumber = parsedData.RankedPlaylistStats[i].HighestCsr.Designation;
+          var rank = ranks[rankNumber-1];
+
+          //update highest designation
+          if(rankNumber > highestDesignation) {
+            highestDesignation = rankNumber;
+          }
+
+          //get tier
+          var tier = " ";
+          if(rank == "Champion") {
+            tier += parsedData.RankedPlaylistStats[i].HighestCsr.Rank;
+          } else if(rank != "Onyx") {
+            tier += parsedData.RankedPlaylistStats[i].HighestCsr.Tier;
+          }
+
+          //get csr
+          var csr = parsedData.RankedPlaylistStats[i].HighestCsr.Raw;
+
+          //create message
+          var message = "Highest Rank: "+ rank + tier+"\n";
+          message += "Highest CSR: "+ csr;
+
+          //create field from data and add to array
+          var field = {
+            name: playlistName,
+            value: message,
+            inline: false
+          };
+          messageFields.push(field);
+        }
+      }
+
+      //check if bot has permission to embed links
+      if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
+        //send error message for no permissions
+        eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
+        return(1);
+      }
+
+      //send embedded message with stats
+      eventVariables.channel.send({ embed: {
+        author: {
+          name: "Season High Stats for " + gamertag
+        },
+        color: eventVariables.embedcolor,
+        thumbnail: {
+          url: "attachment://designation.png",
+          height: 1920 * .01,
+          width: 1452 * .01
+        },
+        fields: messageFields
+
+      }, files: [
+        {
+          attachment: util.format("./assets/designations/%s.png", highestDesignation),
+          name: "designation.png"
+        }
+      ]});
+    });
+  });
+}
+
 module.exports.get1X = get1X;
 module.exports.get3X = get3X;
 module.exports.get2 = get2;
 module.exports.get3 = get3;
+module.exports.getOverall = getOverall;
