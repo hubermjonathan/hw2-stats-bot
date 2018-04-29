@@ -148,7 +148,6 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
               //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-              console.log(util.format("Sent permissions error message to %s.", eventVariables.guild.name));
               return(1);
             }
 
@@ -328,7 +327,6 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
               //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-              console.log(util.format("Sent permissions error message to %s.", eventVariables.guild.name));
               return(1);
             }
 
@@ -508,7 +506,6 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
               //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-              console.log(util.format("Sent permissions error message to %s.", eventVariables.guild.name));
               return(1);
             }
 
@@ -688,7 +685,6 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
               //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-              console.log(util.format("Sent permissions error message to %s.", eventVariables.guild.name));
               return(1);
             }
 

@@ -22,7 +22,6 @@ const rankedFunctions = require("./functions/rankedFunctions"); //ranked functio
 const client = new discord.Client();
 client.login(auth.token);
 client.on("ready", () => {
-  console.log(util.format("Logged in and running as %s.", client.user.username));
   client.user.setActivity("~help");
   var amtServers = client.guilds.size;
   client.user.setActivity(util.format("~help on %d servers", amtServers));
@@ -44,7 +43,6 @@ client.on("message", message => {
     }
     let jsonUserValues = JSON.stringify(defaultUserValues, null, 2);
     fs.writeFileSync(util.format("./usersettings/%s.json", message.author.id), jsonUserValues);
-    console.log(util.format("User settings created for %s.", message.author.username));
   }
 
   //update games message
@@ -79,7 +77,6 @@ client.on("message", message => {
       //command: ping
       case "ping":
         eventVariables.channel.send("pong~");
-        console.log(util.format("Sent ping message to %s.", eventVariables.guild.name));
       break;
 
       //command: help
@@ -103,7 +100,6 @@ client.on("message", message => {
         if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
           //send error message for no permissions
           eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-          console.log(util.format("Sent permissions error message to %s.", eventVariables.guild.name));
           return(1);
         }
 
@@ -121,7 +117,6 @@ client.on("message", message => {
             }
           ]
         }});
-        console.log(util.format("Sent help message to %s.", eventVariables.guild.name));
       break;
 
       //command: link
@@ -131,7 +126,6 @@ client.on("message", message => {
         if(args[0] == null) {
           //send error message for no gamertag
           eventVariables.channel.send(util.format("<@!%s>, please provide a gamertag to link.", eventVariables.userID));
-          console.log(util.format("Sent link error message to %s.", eventVariables.guild.name));
           return(1);
         }
 
@@ -147,7 +141,6 @@ client.on("message", message => {
         if(gamertagToStore.length > 15) {
           //send error message for invalid argument
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
-          console.log(util.format("Sent link error message to %s.", eventVariables.guild.name));
           return(1);
         }
 
@@ -157,7 +150,6 @@ client.on("message", message => {
 
         //send confirmation message
         eventVariables.channel.send(util.format("<@!%s>, your gamertag has been set to '%s'.", eventVariables.userID, gamertagToStore));
-        console.log(util.format("Changed %s's gamertag to '%s'", usersettings.userName, gamertagToStore));
       break;
 
       //command: stats
@@ -167,7 +159,6 @@ client.on("message", message => {
         if(args[0] == null && usersettings.gamertag == null) {
           //send error message for no arguments
           eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
-          console.log(util.format("Sent stats error message to %s.", eventVariables.guild.name));
           return(1);
         }
 
@@ -185,7 +176,6 @@ client.on("message", message => {
         if(gamertag.length > 15) {
           //send error message for invalid argument
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
-          console.log(util.format("Sent stats error message to %s.", eventVariables.guild.name));
           return(1);
         }
 
@@ -207,7 +197,6 @@ client.on("message", message => {
           if (res.statusCode == 404) {
             //send error message for invalid gamertag
             eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
-            console.log(util.format("Sent stats error message to %s.", eventVariables.guild.name));
             return(1);
           }
 
@@ -224,7 +213,6 @@ client.on("message", message => {
             if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
               //send error message for invalid gamertag
               eventVariables.channel.send(util.format("<@!%s>, %s has not played any games.", eventVariables.userID, gamertag));
-              console.log(util.format("Sent stats error message to %s.", eventVariables.guild.name));
               return(1);
             }
 
@@ -333,7 +321,6 @@ client.on("message", message => {
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
               //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-              console.log(util.format("Sent permissions error message to %s.", eventVariables.guild.name));
               return(1);
             }
 
@@ -371,7 +358,6 @@ client.on("message", message => {
                 name: "leader.png"
               }
             ]});
-            console.log(util.format("Sent stats message for %s in %s.", gamertag, eventVariables.guild.name));
           });
         });
       break;
@@ -473,101 +459,12 @@ client.on("message", message => {
         }
       break;
 
-      //command: createteams
-      case "ct":
-      case "createteams":
-        //ensure author is in a voice channel
-        if(eventVariables.member.voiceChannel == null) {
-          //send error message for invalid channel
-          eventVariables.channel.send(util.format("<@!%s>, you must be in a voice channel to use this command.", eventVariables.userID));
-          console.log(util.format("Sent createteams error message to %s.", eventVariables.guild.name));
-          return(1);
-        }
-
-        //get all members of channel
-        var channelMembers = eventVariables.member.voiceChannel.members.clone();
-
-        //ensure there are at least 2 members in the channel
-        if(channelMembers.size < 2) {
-          //send error message for invalid channel
-          eventVariables.channel.send(util.format("<@!%s>, there must be at least 2 people to create teams.", eventVariables.userID));
-          console.log(util.format("Sent createteams error message to %s.", eventVariables.guild.name));
-          return(1);
-        }
-
-        //sort into team 1
-        var team1Members = [];
-        for(var i = 0; i < (channelMembers.size/2)+1; i++) {
-          var key = channelMembers.randomKey();
-          var value = channelMembers.get(key);
-          team1Members.push(value);
-          channelMembers.delete(key);
-        }
-
-        //sort into team 2
-        var team2Members = [];
-        for(var i = 0; i < channelMembers.size; i++) {
-          var key = channelMembers.randomKey();
-          var value = channelMembers.get(key);
-          team2Members.push(value);
-          channelMembers.delete(key);
-        }
-
-        //create team 1 message
-        var team1Message = "";
-        for(var i = 0; i < team1Members.length; i++) {
-          team1Message += team1Members[i];
-          if(i != team1Members.length - 1) {
-            team1Message += "\n";
-          }
-        }
-
-        //create team 2 message
-        var team2Message = "";
-        for(var i = 0; i < team2Members.length; i++) {
-          team2Message += team2Members[i];
-          if(i != team2Members.length - 1) {
-            team2Message += "\n";
-          }
-        }
-
-        //check if bot has permission to embed links
-        if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-          //send error message for no permissions
-          eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-          console.log(util.format("Sent permissions error message to %s.", eventVariables.guild.name));
-          return(1);
-        }
-
-        //send embedded message with teams
-        eventVariables.channel.send({ embed: {
-          author: {
-            name: "Teams"
-          },
-          color: embedcolor,
-          fields: [
-            {
-              name: "Team 1",
-              value: team1Message,
-              inline: true
-            },
-            {
-              name: "Team 2",
-              value: team2Message,
-              inline: true
-            }
-          ]
-        }});
-        console.log(util.format("Sent createteams message to %s.", eventVariables.guild.name));
-      break;
-
       //command: leaders
       case "leaders":
         //check for correct arguments
         if(args[0] == null && usersettings.gamertag == null) {
           //send error message for no arguments
           eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
-          console.log(util.format("Sent leaders error message to %s.", eventVariables.guild.name));
           return(1);
         }
 
@@ -583,7 +480,6 @@ client.on("message", message => {
         if(leadersGamertag.length > 15) {
           //send error message for invalid argument
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
-          console.log(util.format("Sent leaders error message to %s.", eventVariables.guild.name));
           return(1);
         }
 
@@ -605,7 +501,6 @@ client.on("message", message => {
           if (res.statusCode == 404) {
             //send error message for invalid gamertag
             eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
-            console.log(util.format("Sent leaders error message to %s.", eventVariables.guild.name));
             return(1);
           }
 
@@ -622,7 +517,6 @@ client.on("message", message => {
             if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
               //send error message for invalid gamertag
               eventVariables.channel.send(util.format("<@!%s>, %s has not played any games.", eventVariables.userID, leadersGamertag));
-              console.log(util.format("Sent leaders error message to %s.", eventVariables.guild.name));
               return(1);
             }
 
@@ -669,7 +563,6 @@ client.on("message", message => {
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
               //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-              console.log(util.format("Sent permissions error message to %s.", eventVariables.guild.name));
               return(1);
             }
 
@@ -707,7 +600,6 @@ client.on("message", message => {
                 name: "leader.png"
               }
             ]});
-            console.log(util.format("Sent leaders message for %s in %s.", leadersGamertag, eventVariables.guild.name));
           });
         });
       break;
