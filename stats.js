@@ -20,6 +20,7 @@ const helperFunctions = require("./functions/helperFunctions"); //helper functio
 const rankedFunctions = require("./functions/rankedFunctions"); //ranked functions file
 const unrankedFunctions = require("./functions/unrankedFunctions"); //unranked functions file
 const leadersFunctions = require("./functions/leadersFunctions"); //leaders functions file
+const buildFunctions = require("./functions/buildFunctions"); //leaders functions file
 
 //create bot, login, and set game
 const client = new discord.Client();
@@ -283,7 +284,7 @@ client.on("message", message => {
         let gamertagLeaders;
         if(args[0] == null) {
           gamertagLeaders = usersettings.gamertag;
-        } else if(command == "leaders") {
+        } else {
           gamertagLeaders = args.join(" ");
         }
 
@@ -307,6 +308,34 @@ client.on("message", message => {
 
         //print data from api
         leadersFunctions.getTop3(optionsTop3, eventVariables, gamertagLeaders, gamertagLeadersFormatted);
+      break;
+
+      case "lastbuild":
+        //check for correct arguments
+        if(args[0] == null && usersettings.gamertag == null) {
+          eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
+          return(1);
+        }
+
+        //get gamertag
+        let gamertagBuild;
+        if(args[0] == null) {
+          gamertagBuild = usersettings.gamertag;
+        } else {
+          gamertagBuild = args.join(" ");
+        }
+
+        //check for correct argument
+        if(gamertagBuild.length > 15) {
+          eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
+          return(1);
+        }
+
+        //format gamertags with spaces
+        let gamertagBuildFormatted = gamertagBuild.replace(/ /g, "%20");
+
+        //print data from api
+        buildFunctions.getLastBuild(eventVariables, gamertagBuild, gamertagBuildFormatted);
       break;
 
       //no command
