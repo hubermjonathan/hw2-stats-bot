@@ -108,7 +108,7 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
               var rankNumber = 0;
               var rankPercent = "";
               var tier = "";
-              var mmr = parsedData.Results[0].Result.Mmr.Rating;
+              var mmr = helperFunctions.precisionRound(parsedData.Results[0].Result.Mmr.Rating, 5);
               var csr = 0;
             } else {
               var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
@@ -126,7 +126,7 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
               } else if(rank != "Onyx") {
                 tier += parsedData.Results[0].Result.Csr.Tier;
               }
-              var mmr = parsedData.Results[0].Result.Mmr.Rating;
+              var mmr = helperFunctions.precisionRound(parsedData.Results[0].Result.Mmr.Rating, 5);
               var csr = parsedData.Results[0].Result.Csr.Raw;
             }
 
@@ -280,7 +280,7 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
               var rankNumber = 0;
               var rankPercent = "";
               var tier = "";
-              var mmr = parsedData.Results[0].Result.Mmr.Rating;
+              var mmr =helperFunctions.precisionRound(parsedData.Results[0].Result.Mmr.Rating, 5);
               var csr = 0;
             } else {
               var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
@@ -298,7 +298,7 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
               } else if(rank != "Onyx") {
                 tier += parsedData.Results[0].Result.Csr.Tier;
               }
-              var mmr = parsedData.Results[0].Result.Mmr.Rating;
+              var mmr = helperFunctions.precisionRound(parsedData.Results[0].Result.Mmr.Rating, 5);
               var csr = parsedData.Results[0].Result.Csr.Raw;
             }
 
@@ -452,7 +452,7 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
               var rankNumber = 0;
               var rankPercent = "";
               var tier = "";
-              var mmr = parsedData.Results[0].Result.Mmr.Rating;
+              var mmr = helperFunctions.precisionRound(parsedData.Results[0].Result.Mmr.Rating, 5);
               var csr = 0;
             } else {
               var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
@@ -470,7 +470,7 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
               } else if(rank != "Onyx") {
                 tier += parsedData.Results[0].Result.Csr.Tier;
               }
-              var mmr = parsedData.Results[0].Result.Mmr.Rating;
+              var mmr = helperFunctions.precisionRound(parsedData.Results[0].Result.Mmr.Rating, 5);
               var csr = parsedData.Results[0].Result.Csr.Raw;
             }
 
@@ -624,7 +624,7 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
               var rankNumber = 0;
               var rankPercent = "";
               var tier = "";
-              var mmr = parsedData.Results[0].Result.Mmr.Rating;
+              var mmr = helperFunctions.precisionRound(parsedData.Results[0].Result.Mmr.Rating, 5);
               var csr = 0;
             } else {
               var ranks = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Onyx", "Champion"];
@@ -642,7 +642,7 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
               } else if(rank != "Onyx") {
                 tier += parsedData.Results[0].Result.Csr.Tier;
               }
-              var mmr = parsedData.Results[0].Result.Mmr.Rating;
+              var mmr = helperFunctions.precisionRound(parsedData.Results[0].Result.Mmr.Rating, 5);
               var csr = parsedData.Results[0].Result.Csr.Raw;
             }
 

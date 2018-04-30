@@ -99,7 +99,6 @@ client.on("message", message => {
 
         //check if bot has permission to embed links
         if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-          //send error message for no permissions
           eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
           return(1);
         }
@@ -125,7 +124,6 @@ client.on("message", message => {
       case "link":
         //check for correct arguments
         if(args[0] == null) {
-          //send error message for no gamertag
           eventVariables.channel.send(util.format("<@!%s>, please provide a gamertag to link.", eventVariables.userID));
           return(1);
         }
@@ -140,7 +138,6 @@ client.on("message", message => {
 
         //check for correct argument
         if(gamertagToStore.length > 15) {
-          //send error message for invalid argument
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
           return(1);
         }
@@ -162,18 +159,15 @@ client.on("message", message => {
 
         //check for incorrecct playlist
         if(playlistUnranked == null) {
-          //send error message for no playlist
           eventVariables.channel.send(util.format("<@!%s>, usage: ~unranked <teamwar> <gamertag>", eventVariables.userID));
           return(1);
         } else if(playlistUnranked.toUpperCase() != "TEAMWAR") {
-          //send error message for incorrect playlist
           eventVariables.channel.send(util.format("<@!%s>, usage: ~unranked <teamwar> <gamertag>", eventVariables.userID));
           return(1);
         }
 
         //check for non-linked gamertag
         if(args[0] == null && usersettings.gamertag == null) {
-          //send error message for no arguments
           eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
           return(1);
         }
@@ -188,7 +182,6 @@ client.on("message", message => {
 
         //check for correct argument
         if(gamertagUnranked.length > 15) {
-          //send error message for invalid gamertag
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
           return(1);
         }
@@ -221,18 +214,15 @@ client.on("message", message => {
 
         //check for incorrecct playlist
         if(playlistRanked == null) {
-          //send error message for no playlist
           eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
           return(1);
         } else if(playlistRanked.toUpperCase() != "1X" && playlistRanked.toUpperCase() != "3X" && playlistRanked.toUpperCase() != "2" && playlistRanked.toUpperCase() != "3" && playlistRanked.toUpperCase() != "OVERALL") {
-          //send error message for incorrect playlist
           eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
           return(1);
         }
 
         //check for non-linked gamertag
         if(args[0] == null && usersettings.gamertag == null) {
-          //send error message for no arguments
           eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
           return(1);
         }
@@ -247,7 +237,6 @@ client.on("message", message => {
 
         //check for correct argument
         if(gamertagRanked.length > 15) {
-          //send error message for invalid gamertag
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
           return(1);
         }
@@ -286,7 +275,6 @@ client.on("message", message => {
       case "leaders":
         //check for correct arguments
         if(args[0] == null && usersettings.gamertag == null) {
-          //send error message for no arguments
           eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
           return(1);
         }
@@ -301,7 +289,6 @@ client.on("message", message => {
 
         //check for correct argument
         if(gamertagLeaders.length > 15) {
-          //send error message for invalid argument
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
           return(1);
         }
@@ -324,7 +311,6 @@ client.on("message", message => {
 
       //no command
       default:
-        //send error message for invalid command
         eventVariables.channel.send(util.format("<@!%s>, that is not a valid command.", eventVariables.userID));
         return(1);
       break;

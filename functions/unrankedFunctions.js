@@ -23,7 +23,7 @@ var getTeamWar = function(options, eventVariables, gamertag) {
 
       //check if user has not played games
       if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
-        eventVariables.channel.send(util.format("<@!%s>, %s has not played any games.", eventVariables.userID, gamertag));
+        eventVariables.channel.send(util.format("<@!%s>, %s has not played any unranked games.", eventVariables.userID, gamertag));
         return(1);
       }
 

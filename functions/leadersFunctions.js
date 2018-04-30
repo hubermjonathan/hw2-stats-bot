@@ -2,25 +2,26 @@
 const auth = require("../auth.json"); //auth token and api key
 const util = require("util"); //string formatting
 const http = require("https"); //api access
+const helperFunctions = require("./helperFunctions"); //helper functions file
 
 var getTop3 = function(options, eventVariables, gamertag, gamertagFormatted) {
   var leaderCounts = [
-    {name: "Cutter", count: 0},
-    {name: "Isabel", count: 0},
-    {name: "Anders", count: 0},
-    {name: "Forge", count: 0},
-    {name: "Kinsano", count: 0},
-    {name: "Johnson", count: 0},
-    {name: "Jerome", count: 0},
-    {name: "Serina", count: 0},
-    {name: "Decimus", count: 0},
-    {name: "Atriox", count: 0},
-    {name: "Shipmaster", count: 0},
-    {name: "Lekgolo", count: 0},
-    {name: "Arbiter", count: 0},
-    {name: "YapYap", count: 0},
-    {name: "Voridus", count: 0},
-    {name: "Pavium", count: 0}
+    {name: "Cutter", count: 0, won: 0},
+    {name: "Isabel", count: 0, won: 0},
+    {name: "Anders", count: 0, won: 0},
+    {name: "Forge", count: 0, won: 0},
+    {name: "Kinsano", count: 0, won: 0},
+    {name: "Johnson", count: 0, won: 0},
+    {name: "Jerome", count: 0, won: 0},
+    {name: "Serina", count: 0, won: 0},
+    {name: "Decimus", count: 0, won: 0},
+    {name: "Atriox", count: 0, won: 0},
+    {name: "Shipmaster", count: 0, won: 0},
+    {name: "Lekgolo", count: 0, won: 0},
+    {name: "Arbiter", count: 0, won: 0},
+    {name: "YapYap", count: 0, won: 0},
+    {name: "Voridus", count: 0, won: 0},
+    {name: "Pavium", count: 0, won: 0}
   ];
 
   //get request
@@ -66,6 +67,9 @@ var getTop3 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
           //add games started to leader
           leaderCounts[leaderIndex].count = leaderCounts[leaderIndex].count + parsedDataUnranked.MatchmakingSummary.SocialPlaylistStats[playlistIndex].LeaderStats[leader].TotalMatchesStarted;
+
+          //add games won to leader
+          leaderCounts[leaderIndex].won = leaderCounts[leaderIndex].won + parsedDataUnranked.MatchmakingSummary.SocialPlaylistStats[playlistIndex].LeaderStats[leader].TotalMatchesWon;
         }
       }
 
@@ -110,6 +114,9 @@ var getTop3 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
                 //add games started to leader
                 leaderCounts[leaderIndex].count = leaderCounts[leaderIndex].count + parsedDataRanked.RankedPlaylistStats[i].LeaderStats[leader].TotalMatchesStarted;
+
+                //add games won to leader
+                leaderCounts[leaderIndex].won = leaderCounts[leaderIndex].won + parsedDataRanked.RankedPlaylistStats[i].LeaderStats[leader].TotalMatchesWon;
               }
             }
           }
@@ -121,31 +128,40 @@ var getTop3 = function(options, eventVariables, gamertag, gamertagFormatted) {
           var maxLeader = "";
           var midLeader = "";
           var minLeader = "";
+          var maxIndex = -1;
+          var midIndex = -1;
+          var minIndex = -1;
           for(var i = 0; i < leaderCounts.length; i++) {
             if(leaderCounts[i].count > max) {
               min = mid;
               minLeader = midLeader;
+              minIndex = midIndex;
 
               mid = max;
               midLeader = maxLeader;
+              midIndex = maxIndex;
 
               max = leaderCounts[i].count;
               maxLeader = leaderCounts[i].name;
+              maxIndex = i;
               if(maxLeader == "Lekgolo") {
                 maxLeader = "Colony"
               }
             } else if(leaderCounts[i].count > mid) {
               min = mid;
               minLeader = midLeader;
+              minIndex = midIndex;
 
               mid = leaderCounts[i].count;
               midLeader = leaderCounts[i].name;
+              midIndex = i;
               if(midLeader == "Lekgolo") {
                 midLeader = "Colony"
               }
             } else if(leaderCounts[i].count > min) {
               min = leaderCounts[i].count;
               minLeader = leaderCounts[i].name;
+              minIndex = i;
               if(minLeader == "Lekgolo") {
                 minLeader = "Colony"
               }
@@ -172,17 +188,17 @@ var getTop3 = function(options, eventVariables, gamertag, gamertagFormatted) {
             fields: [
               {
                 name: maxLeader,
-                value: "Games played: " + max,
+                value: "Games played: " + max + "\n" + "Win percentage: " + helperFunctions.precisionRound((leaderCounts[maxIndex].won / leaderCounts[maxIndex].count) * 100, 2) + "%",
                 inline: false
               },
               {
                 name: midLeader,
-                value: "Games played: " + mid,
+                value: "Games played: " + mid + "\n" + "Win percentage: " + helperFunctions.precisionRound((leaderCounts[midIndex].won / leaderCounts[midIndex].count) * 100, 2) + "%",
                 inline: false
               },
               {
                 name: minLeader,
-                value: "Games played: " + min,
+                value: "Games played: " + min + "\n" + "Win percentage: " + helperFunctions.precisionRound((leaderCounts[minIndex].won / leaderCounts[minIndex].count) * 100, 2) + "%",
                 inline: false
               }
             ]
