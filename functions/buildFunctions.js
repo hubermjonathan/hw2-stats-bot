@@ -31,6 +31,12 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
       //parse data
       const parsedDataHistory = JSON.parse(rawData);
 
+      //check if user has not played games
+      if(parsedDataHistory.Results.length == 0) {
+        eventVariables.channel.send(util.format("<@!%s>, %s has not played any games.", eventVariables.userID, gamertag));
+        return(1);
+      }
+
       //get match id
       var matchID = parsedDataHistory.Results[0].MatchId;
 
