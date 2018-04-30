@@ -26,9 +26,8 @@ const buildFunctions = require("./functions/buildFunctions"); //leaders function
 const client = new discord.Client();
 client.login(auth.token);
 client.on("ready", () => {
-  client.user.setActivity("~help");
   var amtServers = client.guilds.size;
-  client.user.setActivity(util.format("~help on %d servers", amtServers));
+  client.user.setActivity(util.format(".help on %d servers", amtServers));
 });
 
 //execute user given commands
@@ -51,7 +50,7 @@ client.on("message", message => {
 
   //update games message
   amtServers = client.guilds.size;
-  client.user.setActivity(util.format("~help on %d servers", amtServers));
+  client.user.setActivity(util.format(".help on %d servers", amtServers));
 
   //event variables
   const eventVariables = {
@@ -80,7 +79,7 @@ client.on("message", message => {
     switch(command) {
       //command: ping
       case "ping":
-        eventVariables.channel.send("pong~");
+        eventVariables.channel.send("pong.");
       break;
 
       //command: help
@@ -88,17 +87,17 @@ client.on("message", message => {
       case "help":
         //create help message
         var helpMessage = "**help** (h): shows this list\n";
-        helpMessage += "usage: ~help\n\n";
+        helpMessage += "usage: .help\n\n";
         helpMessage += "**link** (l): links your gamertag to your discord account so you don't have to type it to get stats\n";
-        helpMessage += "usage: ~link <gamertag>\n\n";
+        helpMessage += "usage: .link <gamertag>\n\n";
         helpMessage += "**unranked** (ur): shows team war stats for a given player\n";
-        helpMessage += "usage: ~unranked <teamwar> <gamertag>\n\n";
+        helpMessage += "usage: .unranked <teamwar> <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows ranked stats for a given player\n";
-        helpMessage += "usage: ~ranked <1x/3x/2/3/overall> <gamertag>\n\n";
+        helpMessage += "usage: .ranked <1x/3x/2/3/overall> <gamertag>\n\n";
         helpMessage += "**leaders**: shows most played leaders in team war for a given player\n";
-        helpMessage += "usage: ~leaders <gamertag>\n";
+        helpMessage += "usage: .leaders <gamertag>\n\n";
         helpMessage += "**lastbuild**: shows the first 5 minutes of the build order of the last game for a given player\n";
-        helpMessage += "usage: ~lastbuild <gamertag>";
+        helpMessage += "usage: .lastbuild <gamertag>";
 
         //check if bot has permission to embed links
         if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
@@ -109,7 +108,7 @@ client.on("message", message => {
         //send embedded message with help
         eventVariables.channel.send({ embed: {
           author: {
-            name: "Prefix for commands: '~'"
+            name: "Prefix for commands: '.'"
           },
           color: eventVariables.embedcolor,
           fields: [
@@ -162,16 +161,16 @@ client.on("message", message => {
 
         //check for incorrecct playlist
         if(playlistUnranked == null) {
-          eventVariables.channel.send(util.format("<@!%s>, usage: ~unranked <teamwar> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .unranked <teamwar> <gamertag>", eventVariables.userID));
           return(1);
         } else if(playlistUnranked.toUpperCase() != "TEAMWAR") {
-          eventVariables.channel.send(util.format("<@!%s>, usage: ~unranked <teamwar> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .unranked <teamwar> <gamertag>", eventVariables.userID));
           return(1);
         }
 
         //check for non-linked gamertag
         if(args[0] == null && usersettings.gamertag == null) {
-          eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, use .link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
           return(1);
         }
 
@@ -217,16 +216,16 @@ client.on("message", message => {
 
         //check for incorrecct playlist
         if(playlistRanked == null) {
-          eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
           return(1);
         } else if(playlistRanked.toUpperCase() != "1X" && playlistRanked.toUpperCase() != "3X" && playlistRanked.toUpperCase() != "2" && playlistRanked.toUpperCase() != "3" && playlistRanked.toUpperCase() != "OVERALL") {
-          eventVariables.channel.send(util.format("<@!%s>, usage: ~ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
           return(1);
         }
 
         //check for non-linked gamertag
         if(args[0] == null && usersettings.gamertag == null) {
-          eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, use .link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
           return(1);
         }
 
@@ -278,7 +277,7 @@ client.on("message", message => {
       case "leaders":
         //check for correct arguments
         if(args[0] == null && usersettings.gamertag == null) {
-          eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, use .link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
           return(1);
         }
 
@@ -315,7 +314,7 @@ client.on("message", message => {
       case "lastbuild":
         //check for correct arguments
         if(args[0] == null && usersettings.gamertag == null) {
-          eventVariables.channel.send(util.format("<@!%s>, use ~link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, use .link <gamertag> to link your gamertag to your discord.", eventVariables.userID));
           return(1);
         }
 
