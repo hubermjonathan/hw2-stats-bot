@@ -8,7 +8,6 @@ var getTeamWar = function(options, eventVariables, gamertag) {
   http.get(options, (res) => {
     //check for valid gamertag
     if (res.statusCode == 404) {
-      //send error message for invalid gamertag
       eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
       return(1);
     }
@@ -24,7 +23,6 @@ var getTeamWar = function(options, eventVariables, gamertag) {
 
       //check if user has not played games
       if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any games.", eventVariables.userID, gamertag));
         return(1);
       }
@@ -40,6 +38,7 @@ var getTeamWar = function(options, eventVariables, gamertag) {
       }
 
       //get data for games section
+      //get and format time played
       var timeISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalTimePlayed;
       var timePlayed = "";
       if(timeISO.includes("D")) {
@@ -59,6 +58,8 @@ var getTeamWar = function(options, eventVariables, gamertag) {
           timePlayed += "m";
         }
       }
+
+      //get games information
       var gamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesStarted;
       var gamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesWon;
       var gamesLost = parsedData.MatchmakingSummary.SocialPlaylistStats[index].TotalMatchesLost;
@@ -72,6 +73,7 @@ var getTeamWar = function(options, eventVariables, gamertag) {
       gamesMessage += "Win percentage: "+ winPercent +"%";
 
       //get data for leader section
+      //get favorite leader
       var max = -1;
       var favoriteLeader = "";
       for(var leader in parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats) {
@@ -80,6 +82,8 @@ var getTeamWar = function(options, eventVariables, gamertag) {
           favoriteLeader = leader;
         }
       }
+
+      //get and format time played
       var leaderISO = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalTimePlayed;
       var leaderTimePlayed = "";
       if(leaderISO.includes("D")) {
@@ -99,6 +103,8 @@ var getTeamWar = function(options, eventVariables, gamertag) {
           leaderTimePlayed += "m";
         }
       }
+
+      //get games information
       var leaderGamesPlayed = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesStarted;
       var leaderGamesWon = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[favoriteLeader].TotalMatchesWon;
       var leaderWinPercent = helperFunctions.precisionRound((leaderGamesWon / leaderGamesPlayed) * 100, 2);
@@ -132,7 +138,6 @@ var getTeamWar = function(options, eventVariables, gamertag) {
 
       //check if bot has permission to embed links
       if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-        //send error message for no permissions
         eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
         return(1);
       }

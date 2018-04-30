@@ -1,5 +1,5 @@
 //setup variables
-const auth = require("../auth.json"); //token file for discord
+const auth = require("../auth.json"); //auth token and api key
 const util = require("util"); //string formatting
 const http = require("https"); //api access
 const helperFunctions = require("./helperFunctions"); //helper functions file
@@ -9,7 +9,6 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
   http.get(options, (res) => {
     //check for valid gamertag
     if (res.statusCode == 404) {
-      //send error message for invalid gamertag
       eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
       return(1);
     }
@@ -25,7 +24,6 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
 
       //check if user has not played games
       if(parsedData.RankedPlaylistStats.length == 0) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any ranked games.", eventVariables.userID, gamertag));
         return(1);
       }
@@ -42,7 +40,6 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
 
       //check if user has not played games
       if(parsedData.RankedPlaylistStats[index] == undefined) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of 1v1 X War.", eventVariables.userID, gamertag));
         return(1);
       } else {
@@ -146,7 +143,6 @@ var get1X = function(options, eventVariables, gamertag, gamertagFormatted) {
 
             //check if bot has permission to embed links
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-              //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
               return(1);
             }
@@ -185,7 +181,6 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
   http.get(options, (res) => {
     //check for valid gamertag
     if (res.statusCode == 404) {
-      //send error message for invalid gamertag
       eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
       return(1);
     }
@@ -201,7 +196,6 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
 
       //check if user has not played games
       if(parsedData.RankedPlaylistStats.length == 0) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any ranked games.", eventVariables.userID, gamertag));
         return(1);
       }
@@ -218,7 +212,6 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
 
       //check if user has not played games
       if(parsedData.RankedPlaylistStats[index] == undefined) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of 3v3 X War.", eventVariables.userID, gamertag));
         return(1);
       } else {
@@ -322,7 +315,6 @@ var get3X = function(options, eventVariables, gamertag, gamertagFormatted) {
 
             //check if bot has permission to embed links
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-              //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
               return(1);
             }
@@ -361,7 +353,6 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
   http.get(options, (res) => {
     //check for valid gamertag
     if (res.statusCode == 404) {
-      //send error message for invalid gamertag
       eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
       return(1);
     }
@@ -377,7 +368,6 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
       //check if user has not played games
       if(parsedData.RankedPlaylistStats.length == 0) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any ranked games.", eventVariables.userID, gamertag));
         return(1);
       }
@@ -394,7 +384,6 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
       //check if user has not played games
       if(parsedData.RankedPlaylistStats[index] == undefined) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of Xbox 2v2 War.", eventVariables.userID, gamertag));
         return(1);
       } else {
@@ -498,7 +487,6 @@ var get2 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
             //check if bot has permission to embed links
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-              //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
               return(1);
             }
@@ -537,7 +525,6 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
   http.get(options, (res) => {
     //check for valid gamertag
     if (res.statusCode == 404) {
-      //send error message for invalid gamertag
       eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
       return(1);
     }
@@ -553,7 +540,6 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
       //check if user has not played games
       if(parsedData.RankedPlaylistStats.length == 0) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any ranked games.", eventVariables.userID, gamertag));
         return(1);
       }
@@ -570,7 +556,6 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
       //check if user has not played games
       if(parsedData.RankedPlaylistStats[index] == undefined) {
-        //send error message for invalid gamertag
         eventVariables.channel.send(util.format("<@!%s>, %s has not played any games of Xbox 3v3 War.", eventVariables.userID, gamertag));
         return(1);
       } else {
@@ -674,7 +659,6 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
 
             //check if bot has permission to embed links
             if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-              //send error message for no permissions
               eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
               return(1);
             }
@@ -708,12 +692,11 @@ var get3 = function(options, eventVariables, gamertag, gamertagFormatted) {
   });
 }
 
-var getOverall = function(options, eventVariables, gamertag) {
+var getOverall = function(options, eventVariables, gamertag, gamertagFormatted) {
   //get request
   http.get(options, (res) => {
     //check for valid gamertag
     if (res.statusCode == 404) {
-      //send error message for invalid gamertag
       eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
       return(1);
     }
@@ -782,7 +765,6 @@ var getOverall = function(options, eventVariables, gamertag) {
 
       //check if bot has permission to embed links
       if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-        //send error message for no permissions
         eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
         return(1);
       }

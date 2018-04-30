@@ -7,8 +7,7 @@ by jon huber
 /*
 TODO:
   look for ways to break bot
-  add overall rank for season
-  change leaders command to include data from all playlists
+  add build order command
 */
 
 //setup variables
@@ -20,6 +19,7 @@ const http = require("https"); //api access
 const helperFunctions = require("./functions/helperFunctions"); //helper functions file
 const rankedFunctions = require("./functions/rankedFunctions"); //ranked functions file
 const unrankedFunctions = require("./functions/unrankedFunctions"); //unranked functions file
+const leadersFunctions = require("./functions/leadersFunctions"); //leaders functions file
 
 //create bot, login, and set game
 const client = new discord.Client();
@@ -256,66 +256,29 @@ client.on("message", message => {
         let gamertagRankedFormatted = gamertagRanked.replace(/ /g, "%20");
 
         //call ranked function
+        //information to connect to haloapi
+        const optionsRanked = {
+          hostname: "www.haloapi.com",
+          path: util.format("/stats/hw2/players/%s/stats/seasons/current", gamertagRankedFormatted),
+          headers: {
+            "Ocp-Apim-Subscription-Key": auth.key
+          }
+        };
         if(playlistRanked.toUpperCase() == "1X") {
-          //information to connect to haloapi
-          const options1X = {
-            hostname: "www.haloapi.com",
-            path: util.format("/stats/hw2/players/%s/stats/seasons/current", gamertagRankedFormatted),
-            headers: {
-              "Ocp-Apim-Subscription-Key": auth.key
-            }
-          };
-
           //print data from api
-          rankedFunctions.get1X(options1X, eventVariables, gamertagRanked, gamertagRankedFormatted);
+          rankedFunctions.get1X(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "3X") {
-          //information to connect to haloapi
-          const options3X = {
-            hostname: "www.haloapi.com",
-            path: util.format("/stats/hw2/players/%s/stats/seasons/current", gamertagRankedFormatted),
-            headers: {
-              "Ocp-Apim-Subscription-Key": auth.key
-            }
-          };
-
           //print data from api
-          rankedFunctions.get3X(options3X, eventVariables, gamertagRanked, gamertagRankedFormatted);
+          rankedFunctions.get3X(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "2") {
-          //information to connect to haloapi
-          const options2 = {
-            hostname: "www.haloapi.com",
-            path: util.format("/stats/hw2/players/%s/stats/seasons/current", gamertagRankedFormatted),
-            headers: {
-              "Ocp-Apim-Subscription-Key": auth.key
-            }
-          };
-
           //print data from api
-          rankedFunctions.get2(options2, eventVariables, gamertagRanked, gamertagRankedFormatted);
+          rankedFunctions.get2(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "3") {
-          //information to connect to haloapi
-          const options3 = {
-            hostname: "www.haloapi.com",
-            path: util.format("/stats/hw2/players/%s/stats/seasons/current", gamertagRankedFormatted),
-            headers: {
-              "Ocp-Apim-Subscription-Key": auth.key
-            }
-          };
-
           //print data from api
-          rankedFunctions.get3(options3, eventVariables, gamertagRanked, gamertagRankedFormatted);
+          rankedFunctions.get3(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "OVERALL") {
-          //information to connect to haloapi
-          const optionsOverall = {
-            hostname: "www.haloapi.com",
-            path: util.format("/stats/hw2/players/%s/stats/seasons/current", gamertagRankedFormatted),
-            headers: {
-              "Ocp-Apim-Subscription-Key": auth.key
-            }
-          };
-
           //print data from api
-          rankedFunctions.getOverall(optionsOverall, eventVariables, gamertagRanked, gamertagRankedFormatted);
+          rankedFunctions.getOverall(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         }
       break;
 
@@ -329,139 +292,34 @@ client.on("message", message => {
         }
 
         //get gamertag
-        let leadersGamertag;
+        let gamertagLeaders;
         if(args[0] == null) {
-          leadersGamertag = usersettings.gamertag;
+          gamertagLeaders = usersettings.gamertag;
         } else if(command == "leaders") {
-          leadersGamertag = message.content.substring(9);
+          gamertagLeaders = args.join(" ");
         }
 
         //check for correct argument
-        if(leadersGamertag.length > 15) {
+        if(gamertagLeaders.length > 15) {
           //send error message for invalid argument
           eventVariables.channel.send(util.format("<@!%s>, that gamertag is too long.", eventVariables.userID));
           return(1);
         }
 
         //format gamertags with spaces
-        let leadersGamertagFormatted = leadersGamertag.replace(/ /g, "%20");
+        let gamertagLeadersFormatted = gamertagLeaders.replace(/ /g, "%20");
 
         //information to connect to haloapi
-        const loptions = {
+        const optionsTop3 = {
           hostname: "www.haloapi.com",
-          path: util.format("/stats/hw2/players/%s/stats?", leadersGamertagFormatted),
+          path: util.format("/stats/hw2/players/%s/stats?", gamertagLeadersFormatted),
           headers: {
             "Ocp-Apim-Subscription-Key": auth.key
           }
         };
 
-        //get request
-        http.get(loptions, (res) => {
-          //check for valid gamertag
-          if (res.statusCode == 404) {
-            //send error message for invalid gamertag
-            eventVariables.channel.send(util.format("<@!%s>, that gamertag does not exist.", eventVariables.userID));
-            return(1);
-          }
-
-          //get user stats from api
-          var rawData = "";
-          res.on("data", (chunk) => { rawData += chunk; });
-
-          //create and send message when all data is received
-          res.on("end", () => {
-            //parse data
-            const parsedData = JSON.parse(rawData);
-
-            //check if user has not played games
-            if(parsedData.MatchmakingSummary.SocialPlaylistStats.length == 0) {
-              //send error message for invalid gamertag
-              eventVariables.channel.send(util.format("<@!%s>, %s has not played any games.", eventVariables.userID, leadersGamertag));
-              return(1);
-            }
-
-            //find correct index
-            var index = -1;
-            for(var i = 0; i < parsedData.MatchmakingSummary.SocialPlaylistStats.length; i++) {
-              //find team war id
-              if(parsedData.MatchmakingSummary.SocialPlaylistStats[i].PlaylistId == "282fc197-7bf1-4865-81ec-a312d07567b6") {
-                index = i;
-                break;
-              }
-            }
-
-            //get data for leaders
-            var max = -1;
-            var mid = -1;
-            var min = -1;
-            var maxLeader = "";
-            var midLeader = "";
-            var minLeader = "";
-            for(var leader in parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats) {
-              if(parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted > max) {
-                max = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted;
-                maxLeader = leader;
-                if(maxLeader == "Lekgolo") {
-                  maxLeader = "Colony"
-                }
-              } else if(parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted > mid) {
-                mid = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted;
-                midLeader = leader;
-                if(midLeader == "Lekgolo") {
-                  midLeader = "Colony"
-                }
-              } else if(parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted > min) {
-                min = parsedData.MatchmakingSummary.SocialPlaylistStats[index].LeaderStats[leader].TotalMatchesStarted;
-                minLeader = leader;
-                if(minLeader == "Lekgolo") {
-                  minLeader = "Colony"
-                }
-              }
-            }
-
-            //check if bot has permission to embed links
-            if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-              //send error message for no permissions
-              eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
-              return(1);
-            }
-
-            //send embedded message with stats
-            eventVariables.channel.send({ embed: {
-              author: {
-                name: "Leader Stats for " + leadersGamertag
-              },
-              color: eventVariables.embedcolor,
-              thumbnail: {
-                url: "attachment://leader.png",
-                height: 1920 * .01,
-                width: 1452 * .01
-              },
-              fields: [
-                {
-                  name: maxLeader,
-                  value: "Games played: " + max,
-                  inline: false
-                },
-                {
-                  name: midLeader,
-                  value: "Games played: " + mid,
-                  inline: false
-                },
-                {
-                  name: minLeader,
-                  value: "Games played: " + min,
-                  inline: false
-                }
-              ]
-            }, files: [
-              {
-                attachment: util.format("./assets/leaderpictures/%s.png", maxLeader),
-                name: "leader.png"
-              }
-            ]});
-          });
-        });
+        //print data from api
+        leadersFunctions.getTop3(optionsTop3, eventVariables, gamertagLeaders, gamertagLeadersFormatted);
       break;
 
       //no command
