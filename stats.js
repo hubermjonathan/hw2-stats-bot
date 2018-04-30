@@ -96,7 +96,9 @@ client.on("message", message => {
         helpMessage += "**ranked** (r): shows ranked stats for a given player\n";
         helpMessage += "usage: ~ranked <1x/3x/2/3/overall> <gamertag>\n\n";
         helpMessage += "**leaders**: shows most played leaders in team war for a given player\n";
-        helpMessage += "usage: ~leaders <gamertag>";
+        helpMessage += "usage: ~leaders <gamertag>\n";
+        helpMessage += "**lastbuild**: shows the first 5 minutes of the build order of the last game for a given player\n";
+        helpMessage += "usage: ~lastbuild <gamertag>";
 
         //check if bot has permission to embed links
         if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {

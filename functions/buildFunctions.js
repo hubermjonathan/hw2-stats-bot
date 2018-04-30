@@ -77,7 +77,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
           var lines = 0;
           for(var i = 0; i < parsedDataEvents.GameEvents.length; i++) {
             //print message if there are 15 lines
-            if(lines == 10) {
+            if(lines == 15) {
               //send embedded message with build order
               eventVariables.channel.send({ embed: {
                 color: eventVariables.embedcolor,
@@ -94,11 +94,30 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
               message = "";
             }
 
+            //if the time is over 5m break out
+            if(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds  > 240000) {
+              break;
+            }
+
             //only add event if it is from given user
             if(parsedDataEvents.GameEvents[i].PlayerIndex == gamertagID) {
-              if(parsedDataEvents.GameEvents[i].EventName == "BuildingConstructionQueued" && parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds != 0) {
-                //get building name
-                var buildingName = helperFunctions.getBuildingName(parsedDataEvents.GameEvents[i].BuildingId);
+              if(parsedDataEvents.GameEvents[i].EventName == "PlayerJoinedMatch") {
+                //get leader name of player
+                var leaderName = helperFunctions.getLeaderName(parsedDataEvents.GameEvents[i].LeaderId);
+
+                //create message
+                message += "**Joined match as**: ";
+                message += leaderName;
+                message += "\n";
+                lines++;
+              } else if(parsedDataEvents.GameEvents[i].EventName == "BuildingConstructionCompleted" && parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds != 0) {
+                //get building created
+                for(var j = 0; j < parsedDataEvents.GameEvents.length; j++) {
+                  if(parsedDataEvents.GameEvents[j].InstanceId == parsedDataEvents.GameEvents[i].InstanceId) {
+                    var buildingName = helperFunctions.getBuildingName(parsedDataEvents.GameEvents[j].BuildingId);
+                    break;
+                  }
+                }
 
                 if(buildingName != "") {
                   //create message
@@ -119,24 +138,6 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
                   message += ": ";
                   message += buildingName;
                   message += " upgraded."
-                  message += "\n";
-                  lines++;
-                }
-              } else if(parsedDataEvents.GameEvents[i].EventName == "BuildingRecycled") {
-                //get building recycled
-                for(var j = 0; j < parsedDataEvents.GameEvents.length; j++) {
-                  if(parsedDataEvents.GameEvents[j].InstanceId == parsedDataEvents.GameEvents[i].InstanceId) {
-                    var buildingName = helperFunctions.getBuildingName(parsedDataEvents.GameEvents[j].BuildingId);
-                    break;
-                  }
-                }
-
-                if(buildingName != "") {
-                  //create message
-                  message += "**" + helperFunctions.formatMs(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds) + "**";
-                  message += ": ";
-                  message += buildingName;
-                  message += " recycled."
                   message += "\n";
                   lines++;
                 }
@@ -165,7 +166,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
               } else if(parsedDataEvents.GameEvents[i].EventName == "PointCaptured") {
                 //create message
                 message += "**" + helperFunctions.formatMs(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds) + "**";
-                message += ": point captured.";
+                message += ": Point captured.";
                 message += "\n";
                 lines++;
               } else if(parsedDataEvents.GameEvents[i].EventName == "LeaderPowerUnlocked") {
