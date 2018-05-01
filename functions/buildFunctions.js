@@ -61,6 +61,12 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
           //parse data
           const parsedDataEvents = JSON.parse(rawData);
 
+          //check if data was retrieved too quickly
+          if(!parsedDataEvents.IsCompleteSetOfEvents) {
+            eventVariables.channel.send(util.format("<@!%s>, %s wait a little longer before retrieving.", eventVariables.userID, gamertag));
+            return(1);
+          }
+
           //get id of gamertag passed in
           var gamertagID = -1;
           for(var i = 0; i < parsedDataEvents.GameEvents.length; i++) {
@@ -101,7 +107,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
             }
 
             //if the time is over 5m break out
-            if(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds  > 240000) {
+            if(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds  > 300000) {
               break;
             }
 
@@ -148,7 +154,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
                   message += "\n";
                   lines++;
                 }
-              } else if(parsedDataEvents.GameEvents[i].EventName == "TechResearched") {
+              }/* else if(parsedDataEvents.GameEvents[i].EventName == "TechResearched") {
                 //get tech name
                 var techName = helperFunctions.getTechName(parsedDataEvents.GameEvents[i].TechId);
 
@@ -159,7 +165,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
                 message += " researched."
                 message += "\n";
                 lines++;
-              } else if(parsedDataEvents.GameEvents[i].EventName == "UnitTrained" && parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds != 0) {
+              }*/ else if(parsedDataEvents.GameEvents[i].EventName == "UnitTrained" && parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds != 0 && !parsedDataEvents.GameEvents[i].SquadId.includes("bldg")) {
                 //get unit name
                 var unitName = helperFunctions.getUnitName(parsedDataEvents.GameEvents[i].SquadId);
 
@@ -176,7 +182,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
                 message += ": Point captured.";
                 message += "\n";
                 lines++;
-              } else if(parsedDataEvents.GameEvents[i].EventName == "LeaderPowerUnlocked") {
+              }/* else if(parsedDataEvents.GameEvents[i].EventName == "LeaderPowerUnlocked") {
                 //create message
                 message += "**" + helperFunctions.formatMs(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds) + "**";
                 message += ": ";
@@ -184,7 +190,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
                 message += " unlocked."
                 message += "\n";
                 lines++;
-              }
+              }*/
             }
           }
 
