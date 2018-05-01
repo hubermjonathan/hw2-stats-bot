@@ -14,16 +14,21 @@ var formatMs = function(time) {
 
   //over one minute
   var timeInSeconds = time/1000;
-  var formattedTime = precisionRound(timeInSeconds / 60, 0) + "m ";
+  if(timeInSeconds % 60 != 0 && precisionRound(timeInSeconds+0.5, 0) % 60 == 0) {
+    timeInSeconds -= 0.5;
+  }
+  var formattedTime = Math.trunc(timeInSeconds / 60) + "m ";
   formattedTime += precisionRound(timeInSeconds % 60, 0) + "s";
   return formattedTime;
 }
 
+//function to get leader name from api id
 var getLeaderName = function(leaderId) {
   var leaders = ["Cutter", "Isabel", "Anders", "Decimus", "Atriox", "Shipmaster", "Forge", "Kinsano", "Jerome", "Arbiter", "Johnson", "Colony", "Serina", "YapYap", "Pavium", "Voridus"];
   return leaders[leaderId-1];
 }
 
+//function to get building name from api id
 var getBuildingName = function(buildingId) {
   if(buildingId.includes("unsc")) {
     if(buildingId.includes("supplypad")) {
@@ -71,6 +76,7 @@ var getBuildingName = function(buildingId) {
   return buildingName;
 }
 
+//function to get unit name from api id
 var getUnitName = function(unitId) {
   if(unitId.includes("unsc")) {
     if(unitId.includes("inf")) {
@@ -149,6 +155,7 @@ var getUnitName = function(unitId) {
   return unitName;
 }
 
+//function to get tech name from api id
 var getTechName = function(techId) {
   if(techId.includes("unsc")) {
     var techName = "UNSC power";

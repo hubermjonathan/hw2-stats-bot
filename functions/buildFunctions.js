@@ -121,13 +121,14 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
                 for(var j = 0; j < parsedDataEvents.GameEvents.length; j++) {
                   if(parsedDataEvents.GameEvents[j].InstanceId == parsedDataEvents.GameEvents[i].InstanceId) {
                     var buildingName = helperFunctions.getBuildingName(parsedDataEvents.GameEvents[j].BuildingId);
+                    var time = helperFunctions.formatMs(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds);
                     break;
                   }
                 }
 
                 if(buildingName != "") {
                   //create message
-                  message += "**" + helperFunctions.formatMs(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds) + "**";
+                  message += "**" + time + "**";
                   message += ": ";
                   message += buildingName;
                   message += " built."
