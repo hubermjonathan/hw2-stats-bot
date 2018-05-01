@@ -726,6 +726,8 @@ var getOverall = function(options, eventVariables, gamertag, gamertagFormatted) 
             playlistName = "Ranked Xbox 2v2 War";
           } else if(parsedData.RankedPlaylistStats[i].PlaylistId == "fe8e1773-adc6-43d0-a23f-4599987ce0f4") {
             playlistName = "Ranked Xbox 3v3 War";
+          } else {
+            continue;
           }
 
           //get rank
@@ -763,31 +765,38 @@ var getOverall = function(options, eventVariables, gamertag, gamertagFormatted) 
         }
       }
 
-      //check if bot has permission to embed links
-      if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
-        eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
+      //only print if user is placed
+      if(highestDesignation != 0) {
+        //check if bot has permission to embed links
+        if(!eventVariables.guild.me.permissionsIn(eventVariables.channel).has("EMBED_LINKS")) {
+          eventVariables.channel.send(util.format("<@!%s>, make sure that I have the permissions to embed links.", eventVariables.userID));
+          return(1);
+        }
+
+        //send embedded message with stats
+        eventVariables.channel.send({ embed: {
+          author: {
+            name: "Season High Stats for " + gamertag
+          },
+          color: eventVariables.embedcolor,
+          thumbnail: {
+            url: "attachment://designation.png",
+            height: 1920 * .01,
+            width: 1452 * .01
+          },
+          fields: messageFields
+
+        }, files: [
+          {
+            attachment: util.format("./assets/designations/%s.png", highestDesignation),
+            name: "designation.png"
+          }
+        ]});
+      } else {
+        //send error message for no placement
+        eventVariables.channel.send(util.format("<@!%s>, %s has not placed in any ranked playlists.", eventVariables.userID, gamertag));
         return(1);
       }
-
-      //send embedded message with stats
-      eventVariables.channel.send({ embed: {
-        author: {
-          name: "Season High Stats for " + gamertag
-        },
-        color: eventVariables.embedcolor,
-        thumbnail: {
-          url: "attachment://designation.png",
-          height: 1920 * .01,
-          width: 1452 * .01
-        },
-        fields: messageFields
-
-      }, files: [
-        {
-          attachment: util.format("./assets/designations/%s.png", highestDesignation),
-          name: "designation.png"
-        }
-      ]});
     });
   });
 }

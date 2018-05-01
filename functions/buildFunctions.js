@@ -165,7 +165,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
                 message += " researched."
                 message += "\n";
                 lines++;
-              }*/ else if(parsedDataEvents.GameEvents[i].EventName == "UnitTrained" && parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds != 0 && !parsedDataEvents.GameEvents[i].SquadId.includes("bldg")) {
+              }*/ else if(parsedDataEvents.GameEvents[i].EventName == "UnitTrained" && parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds != 0 && !parsedDataEvents.GameEvents[i].SquadId.includes("bldg") && !parsedDataEvents.GameEvents[i].SquadId.includes("fx_")) {
                 //get unit name
                 var unitName = helperFunctions.getUnitName(parsedDataEvents.GameEvents[i].SquadId);
 

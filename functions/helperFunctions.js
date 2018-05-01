@@ -180,7 +180,7 @@ var getUnitName = function(unitId) {
         var unitName = "Heavy Grunts";
       } else if(unitId.includes("bruterider_01")) {
         var unitName = "Grunt Riders";
-      } else if(unitId.includes("generic_brutegrenadier_fromlich")) {
+      } else if(unitId.includes("brutegrenadier_01")) {
         var unitName = "Brute Grenadiers";
       } else if(unitId.includes("atrioxchosen_01")) {
         var unitName = "Atriox Hero Unit";

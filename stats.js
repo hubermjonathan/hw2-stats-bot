@@ -7,7 +7,8 @@ by jon huber
 /*
 TODO:
   look for ways to break bot
-  add build order command
+  add leader powers and tech to build order command
+  add more playlists to unranked and ranked
 */
 
 //setup variables
@@ -32,6 +33,9 @@ client.on("ready", () => {
 
 //execute user given commands
 client.on("message", message => {
+  //DEBUGGING PURPOSES
+  if(message.channel.id != "440394595810017287") return(1);
+
   //ensure that the message came from a server and not a direct message
   if(message.guild == null) return(1);
 
@@ -88,15 +92,15 @@ client.on("message", message => {
         //create help message
         var helpMessage = "**help** (h): shows this list\n";
         helpMessage += "usage: .help\n\n";
-        helpMessage += "**link** (l): links your gamertag to your discord account so you don't have to type it to get stats\n";
+        helpMessage += "**link** (l): links your gamertag to your discord account\n";
         helpMessage += "usage: .link <gamertag>\n\n";
-        helpMessage += "**unranked** (ur): shows team war stats for a given player\n";
+        helpMessage += "**unranked** (ur): shows unranked stats for a given player in a playlist\n";
         helpMessage += "usage: .unranked <teamwar> <gamertag>\n\n";
-        helpMessage += "**ranked** (r): shows ranked stats for a given player\n";
+        helpMessage += "**ranked** (r): shows ranked stats for a given player in a playlist\n";
         helpMessage += "usage: .ranked <1x/3x/2/3/overall> <gamertag>\n\n";
-        helpMessage += "**leaders**: shows most played leaders in team war for a given player\n";
+        helpMessage += "**leaders**: shows most played leaders for a given player\n";
         helpMessage += "usage: .leaders <gamertag>\n\n";
-        helpMessage += "**lastbuild**: shows the first 5 minutes of the build order of the last game for a given player\n";
+        helpMessage += "**lastbuild**: shows early build order of the last game for a given player\n";
         helpMessage += "usage: .lastbuild <gamertag>";
 
         //check if bot has permission to embed links
