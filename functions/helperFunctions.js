@@ -255,9 +255,10 @@ var getUnitName = function(unitId) {
 var getTechName = function(techId) {
   if(techId.includes("unsc")) {
     var techName = "UNSC tech";
-  }
-  if(techId.includes("cov")) {
+  } else if(techId.includes("cov")) {
     var techName = "COV tech";
+  } else {
+    var techName = techId;
   }
 
   return techName;

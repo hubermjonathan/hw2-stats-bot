@@ -97,7 +97,7 @@ client.on("message", message => {
         helpMessage += "**unranked** (ur): shows unranked stats for a given player in a playlist\n";
         helpMessage += "usage: .unranked <teamwar> <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows ranked stats for a given player in a playlist\n";
-        helpMessage += "usage: .ranked <1x/3x/2/3/overall> <gamertag>\n\n";
+        helpMessage += "usage: .ranked <1x/3x/2/3/season/alltime> <gamertag>\n\n";
         helpMessage += "**leaders**: shows most played leaders for a given player\n";
         helpMessage += "usage: .leaders <gamertag>\n\n";
         helpMessage += "**lastbuild**: shows early build order of the last game for a given player\n";
@@ -220,10 +220,7 @@ client.on("message", message => {
 
         //check for incorrecct playlist
         if(playlistRanked == null) {
-          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
-          return(1);
-        } else if(playlistRanked.toUpperCase() != "1X" && playlistRanked.toUpperCase() != "3X" && playlistRanked.toUpperCase() != "2" && playlistRanked.toUpperCase() != "3" && playlistRanked.toUpperCase() != "OVERALL") {
-          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/overall> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/season/alltime> <gamertag>", eventVariables.userID));
           return(1);
         }
 
@@ -271,9 +268,24 @@ client.on("message", message => {
         } else if(playlistRanked.toUpperCase() == "3") {
           //print data from api
           rankedFunctions.get3(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
-        } else if(playlistRanked.toUpperCase() == "OVERALL") {
+        } else if(playlistRanked.toUpperCase() == "SEASON") {
           //print data from api
-          rankedFunctions.getOverall(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
+          rankedFunctions.getSeason(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
+        } else if(playlistRanked.toUpperCase() == "ALLTIME") {
+          //information to connect to haloapi
+          const optionsAllTime = {
+            hostname: "www.haloapi.com",
+            path: util.format("/stats/hw2/players/%s/stats", gamertagRankedFormatted),
+            headers: {
+              "Ocp-Apim-Subscription-Key": auth.key
+            }
+          };
+
+          //print data from api
+          rankedFunctions.getAllTime(optionsAllTime, eventVariables, gamertagRanked, gamertagRankedFormatted);
+        } else {
+          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/season/alltime> <gamertag>", eventVariables.userID));
+          return(1);
         }
       break;
 

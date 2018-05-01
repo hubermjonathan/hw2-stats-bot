@@ -179,7 +179,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
               } else if(parsedDataEvents.GameEvents[i].EventName == "PointCaptured") {
                 //create message
                 message += "**" + helperFunctions.formatMs(parsedDataEvents.GameEvents[i].TimeSinceStartMilliseconds) + "**";
-                message += ": Point captured.";
+                message += ": Power Node captured.";
                 message += "\n";
                 lines++;
               }/* else if(parsedDataEvents.GameEvents[i].EventName == "LeaderPowerUnlocked") {
