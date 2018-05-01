@@ -52,6 +52,12 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
 
       //get request
       http.get(options, (res) => {
+        //check if data was retrieved too quickly
+        if (res.statusCode == 404) {
+          eventVariables.channel.send(util.format("<@!%s>, wait a little longer before retrieving.", eventVariables.userID));
+          return(1);
+        }
+
         //get user stats
         var rawData = "";
         res.on("data", (chunk) => { rawData += chunk; });
@@ -63,7 +69,7 @@ var getLastBuild = function(eventVariables, gamertag, gamertagFormatted) {
 
           //check if data was retrieved too quickly
           if(!parsedDataEvents.IsCompleteSetOfEvents) {
-            eventVariables.channel.send(util.format("<@!%s>, %s wait a little longer before retrieving.", eventVariables.userID, gamertag));
+            eventVariables.channel.send(util.format("<@!%s>, wait a little longer before retrieving.", eventVariables.userID, gamertag));
             return(1);
           }
 

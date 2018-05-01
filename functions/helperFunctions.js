@@ -253,15 +253,7 @@ var getUnitName = function(unitId) {
 
 //function to get tech name from api id
 var getTechName = function(techId) {
-  if(techId.includes("unsc")) {
-    var techName = "UNSC tech";
-  } else if(techId.includes("cov")) {
-    var techName = "COV tech";
-  } else {
-    var techName = techId;
-  }
-
-  return techName;
+  return techId;
 }
 
 module.exports.precisionRound =  precisionRound;

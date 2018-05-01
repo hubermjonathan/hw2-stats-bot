@@ -86,6 +86,11 @@ client.on("message", message => {
         eventVariables.channel.send("pong.");
       break;
 
+      //command: ping
+      case "test":
+        eventVariables.channel.send(helperFunctions.formatCaps("HELLO WORLD"));
+      break;
+
       //command: help
       case "h":
       case "help":
@@ -131,6 +136,12 @@ client.on("message", message => {
         //check for correct arguments
         if(args[0] == null) {
           eventVariables.channel.send(util.format("<@!%s>, please provide a gamertag to link.", eventVariables.userID));
+          return(1);
+        }
+
+        //check for correct arguments
+        if(args[0].includes("<") || args[0].includes(">")) {
+          eventVariables.channel.send(util.format("<@!%s>, remove the <> for the link to work.", eventVariables.userID));
           return(1);
         }
 
