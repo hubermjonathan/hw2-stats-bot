@@ -34,7 +34,7 @@ client.on("ready", () => {
 //execute user given commands
 client.on("message", message => {
   //DEBUGGING PURPOSES
-  if(message.channel.id != "440394595810017287") return(1);
+  //if(message.channel.id != "440394595810017287") return(1);
 
   //ensure that the message came from a server and not a direct message
   if(message.guild == null) return(1);
@@ -216,8 +216,12 @@ client.on("message", message => {
           //print data from api
           unrankedFunctions.getTeamWar(optionsUnranked, eventVariables, gamertagUnranked);
         } else if(playlistUnranked.toUpperCase() == "B3") {
+          eventVariables.channel.send(util.format("<@!%s>, Blitz playlists have not been implemented yet.", eventVariables.userID));
+          return(1);
+          //print data from api
           //unrankedFunctions.getBlitz3(optionsUnranked, eventVariables, gamertagUnranked);
         } else {
+          //print data from api
           eventVariables.channel.send(util.format("<@!%s>, usage: .unranked <teamwar/b3> <gamertag>", eventVariables.userID));
           return(1);
         }
@@ -225,6 +229,7 @@ client.on("message", message => {
 
       //command: ranked
       case "r":
+      case "rank":
       case "ranked":
         //get playlist
         var playlistRanked = args[0];
@@ -281,9 +286,13 @@ client.on("message", message => {
           //print data from api
           rankedFunctions.get3(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "B1") {
+          eventVariables.channel.send(util.format("<@!%s>, Blitz playlists have not been implemented yet.", eventVariables.userID));
+          return(1);
           //print data from api
           //rankedFunctions.getBlitz1(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "B2") {
+          eventVariables.channel.send(util.format("<@!%s>, Blitz playlists have not been implemented yet.", eventVariables.userID));
+          return(1);
           //print data from api
           //rankedFunctions.getBlitz2(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "SEASON") {
