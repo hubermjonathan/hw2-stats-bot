@@ -839,9 +839,9 @@ var getAllTime = function(options, eventVariables, gamertag, gamertagFormatted) 
             playlistName = "Ranked Xbox 2v2 War";
           } else if(parsedData.MatchmakingSummary.RankedPlaylistStats[i].PlaylistId == "fe8e1773-adc6-43d0-a23f-4599987ce0f4") {
             playlistName = "Ranked Xbox 3v3 War";
-          } else if(parsedData.RankedPlaylistStats[i].PlaylistId == "BLITZ1") {
+          } else if(parsedData.MatchmakingSummary.RankedPlaylistStats[i].PlaylistId == "BLITZ1") {
             playlistName = "Ranked 1v1 Blitz Open";
-          } else if(parsedData.RankedPlaylistStats[i].PlaylistId == "BLITZ2") {
+          } else if(parsedData.MatchmakingSummary.RankedPlaylistStats[i].PlaylistId == "BLITZ2") {
             playlistName = "Ranked 2v2 Blitz Open";
           } else {
             continue;

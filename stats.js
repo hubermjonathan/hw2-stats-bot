@@ -34,7 +34,7 @@ client.on("ready", () => {
 //execute user given commands
 client.on("message", message => {
   //DEBUGGING PURPOSES
-  //if(message.channel.id != "440394595810017287") return(1);
+  if(message.channel.id != "440394595810017287") return(1);
 
   //ensure that the message came from a server and not a direct message
   if(message.guild == null) return(1);
