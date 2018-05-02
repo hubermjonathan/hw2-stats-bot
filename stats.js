@@ -34,7 +34,7 @@ client.on("ready", () => {
 //execute user given commands
 client.on("message", message => {
   //DEBUGGING PURPOSES
-  if(message.channel.id != "440394595810017287") return(1);
+  //if(message.channel.id != "440394595810017287") return(1);
 
   //ensure that the message came from a server and not a direct message
   if(message.guild == null) return(1);
@@ -100,9 +100,9 @@ client.on("message", message => {
         helpMessage += "**link** (l): links your gamertag to your discord account\n";
         helpMessage += "usage: .link <gamertag>\n\n";
         helpMessage += "**unranked** (ur): shows unranked stats for a given player in a playlist\n";
-        helpMessage += "usage: .unranked <teamwar> <gamertag>\n\n";
+        helpMessage += "usage: .unranked <teamwar/b3> <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows ranked stats for a given player in a playlist\n";
-        helpMessage += "usage: .ranked <1x/3x/2/3/season/alltime> <gamertag>\n\n";
+        helpMessage += "usage: .ranked <1x/3x/2/3/b1/b2/season/alltime> <gamertag>\n\n";
         helpMessage += "**leaders**: shows most played leaders for a given player\n";
         helpMessage += "usage: .leaders <gamertag>\n\n";
         helpMessage += "**lastbuild**: shows early build order of the last game for a given player\n";
@@ -176,10 +176,7 @@ client.on("message", message => {
 
         //check for incorrecct playlist
         if(playlistUnranked == null) {
-          eventVariables.channel.send(util.format("<@!%s>, usage: .unranked <teamwar> <gamertag>", eventVariables.userID));
-          return(1);
-        } else if(playlistUnranked.toUpperCase() != "TEAMWAR") {
-          eventVariables.channel.send(util.format("<@!%s>, usage: .unranked <teamwar> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .unranked <teamwar/b3> <gamertag>", eventVariables.userID));
           return(1);
         }
 
@@ -207,18 +204,22 @@ client.on("message", message => {
         let gamertagUnrankedFormatted = gamertagUnranked.replace(/ /g, "%20");
 
         //call unranked function
+        //information to connect to haloapi
+        const optionsUnranked = {
+          hostname: "www.haloapi.com",
+          path: util.format("/stats/hw2/players/%s/stats?", gamertagUnrankedFormatted),
+          headers: {
+            "Ocp-Apim-Subscription-Key": auth.key
+          }
+        };
         if(playlistUnranked.toUpperCase() == "TEAMWAR") {
-          //information to connect to haloapi
-          const optionsTeamWar = {
-            hostname: "www.haloapi.com",
-            path: util.format("/stats/hw2/players/%s/stats?", gamertagUnrankedFormatted),
-            headers: {
-              "Ocp-Apim-Subscription-Key": auth.key
-            }
-          };
-
           //print data from api
-          unrankedFunctions.getTeamWar(optionsTeamWar, eventVariables, gamertagUnranked);
+          unrankedFunctions.getTeamWar(optionsUnranked, eventVariables, gamertagUnranked);
+        } else if(playlistUnranked.toUpperCase() == "B3") {
+          //unrankedFunctions.getBlitz3(optionsUnranked, eventVariables, gamertagUnranked);
+        } else {
+          eventVariables.channel.send(util.format("<@!%s>, usage: .unranked <teamwar/b3> <gamertag>", eventVariables.userID));
+          return(1);
         }
       break;
 
@@ -231,7 +232,7 @@ client.on("message", message => {
 
         //check for incorrecct playlist
         if(playlistRanked == null) {
-          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/season/alltime> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/b1/b2/season/alltime> <gamertag>", eventVariables.userID));
           return(1);
         }
 
@@ -279,6 +280,12 @@ client.on("message", message => {
         } else if(playlistRanked.toUpperCase() == "3") {
           //print data from api
           rankedFunctions.get3(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
+        } else if(playlistRanked.toUpperCase() == "B1") {
+          //print data from api
+          //rankedFunctions.getBlitz1(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
+        } else if(playlistRanked.toUpperCase() == "B2") {
+          //print data from api
+          //rankedFunctions.getBlitz2(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "SEASON") {
           //print data from api
           rankedFunctions.getSeason(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
@@ -295,7 +302,7 @@ client.on("message", message => {
           //print data from api
           rankedFunctions.getAllTime(optionsAllTime, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else {
-          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/season/alltime> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/b1/b2/season/alltime> <gamertag>", eventVariables.userID));
           return(1);
         }
       break;
