@@ -86,11 +86,6 @@ client.on("message", message => {
         eventVariables.channel.send("pong.");
       break;
 
-      //command: ping
-      case "test":
-        eventVariables.channel.send(helperFunctions.formatCaps("HELLO WORLD"));
-      break;
-
       //command: help
       case "h":
       case "help":
@@ -387,9 +382,6 @@ client.on("message", message => {
         eventVariables.channel.send(util.format("<@!%s>, that is not a valid command.", eventVariables.userID));
         return(1);
       break;
-
     }
-
   }
-
 });
