@@ -9,7 +9,8 @@ hw2statsbot is a discord bot that provides statistics for the game halo wars 2</
 **gamertag linking** - link your gamertag to your discord account so you don't have to type it everytime you want your stats</br>
 **unranked stats** - get stats for unranked playlists like total games, win percentage, and favorite leader</br>
 **ranked stats** - get stats for ranked playlists like rank, csr, mmr, and win percentage</br>
-**leader stats** - get most played leaders
+**leader stats** - get most played leaders</br>
+**build order** - view build order for most recent game of a player
 ### upcoming features
 add last build order command
 ### version history
