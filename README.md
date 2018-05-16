@@ -1,5 +1,5 @@
 # hw2statsbot
-**v1.2.1** <img src="assets/logo.png" align="right" alt="logo" width="200px" height="200px"></br>
+**v1.2.2** <img src="assets/logo.png" align="right" alt="logo" width="200px" height="200px"></br>
 hw2statsbot is a discord bot that provides statistics for the game halo wars 2</br>
 [main code](stats.js) | [author](#author)
 
@@ -14,6 +14,7 @@ hw2statsbot is a discord bot that provides statistics for the game halo wars 2</
 ### upcoming features
 add last build order command
 ### version history
+**1.2.2** - user friendly changes, bug fixes</br>
 **1.2.1** - split overall ranked to season high and all time high, bug fixes</br>
 **1.2.0** - added command to get build order of last game, bug fixes</br>
 **1.1.2** - changed leaders command to combine data from ranked and unranked playlists, bug fixes</br>
