@@ -1,5 +1,5 @@
 # hw2statsbot
-**v1.2.2** <img src="assets/logo.png" align="right" alt="logo" width="200px" height="200px"></br>
+**v1.2.3** <img src="assets/logo.png" align="right" alt="logo" width="200px" height="200px"></br>
 hw2statsbot is a discord bot that provides statistics for the game halo wars 2</br>
 [main code](stats.js) | [author](#author)
 
@@ -14,6 +14,7 @@ hw2statsbot is a discord bot that provides statistics for the game halo wars 2</
 ### upcoming features
 add last build order command
 ### version history
+**1.2.3** - added support for season 11 playlists</br>
 **1.2.2** - user friendly changes, bug fixes</br>
 **1.2.1** - split overall ranked to season high and all time high, bug fixes</br>
 **1.2.0** - added command to get build order of last game, bug fixes</br>
@@ -24,18 +25,6 @@ add last build order command
 **1.0.2** - added tier (plat 2, gold 3, etc.) to ranked stats</br>
 **1.0.1** - changed embed message color</br>
 **1.0.0** - added gamertag linking, added team war stats, added ranked stats
-### creating your own version
-1. click fork in the upper right hand corner to create a copy of this repo to edit on your own
-2. clone your repo
-3. create a json file called auth.json containing your discord bot token and your halo api key like this:
-```
-{
-  "token": "YOUR-DISCORD-TOKEN",
-  "key": "YOUR-HALO-API-KEY"
-}
-```
-4. run npm install and then npm install discord.js in your repo folder
-5. start creating!
 #### author
 Jon Huber</br>
 Purdue Computer Science 2021</br>

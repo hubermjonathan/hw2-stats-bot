@@ -35,7 +35,7 @@ client.on("ready", () => {
 client.on("message", message => {
 
   //ensure that the message came from a server and not a direct message
-  if(message.guild == null) return(1);
+  if(message.guild === null) return(1);
 
   //esnure that message author is not the bot
   if(message.author.bot) return(1);
@@ -84,6 +84,17 @@ client.on("message", message => {
         eventVariables.channel.send("pong.");
       break;
 
+      //command: users
+      case "users":
+        if(eventVariables.userID !== "196141424318611457") break;
+        var total = 0;
+        for(var i = 0; i < client.guilds.size; i++) {
+            total += client.guilds.array()[i].members.size;
+            total--;
+        }
+        eventVariables.channel.send(util.format("number of total users: %d", total));
+      break;
+
       //command: help
       case "h":
       case "help":
@@ -95,7 +106,7 @@ client.on("message", message => {
         helpMessage += "**unranked** (ur): shows unranked stats for a given player in a playlist\n";
         helpMessage += "usage: .unranked <teamwar/b3> <gamertag>\n\n";
         helpMessage += "**ranked** (r): shows ranked stats for a given player in a playlist\n";
-        helpMessage += "usage: .ranked <1x/3x/2/3/b1/b2/season/alltime> <gamertag>\n\n";
+        helpMessage += "usage: .ranked <1/2/3/b1/b2/season/alltime> <gamertag>\n\n";
         helpMessage += "**leaders**: shows most played leaders for a given player\n";
         helpMessage += "usage: .leaders <gamertag>\n\n";
         helpMessage += "**lastbuild**: shows early build order of the last game for a given player\n";
@@ -230,7 +241,7 @@ client.on("message", message => {
 
         //check for incorrecct playlist
         if(playlistRanked == null) {
-          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/b1/b2/season/alltime> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1/2/3/b1/b2/season/alltime> <gamertag>", eventVariables.userID));
           return(1);
         }
 
@@ -266,12 +277,9 @@ client.on("message", message => {
             "Ocp-Apim-Subscription-Key": auth.key
           }
         };
-        if(playlistRanked.toUpperCase() == "1X") {
+        if(playlistRanked.toUpperCase() == "1") {
           //print data from api
-          rankedFunctions.get1X(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
-        } else if(playlistRanked.toUpperCase() == "3X") {
-          //print data from api
-          rankedFunctions.get3X(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
+          rankedFunctions.get1(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else if(playlistRanked.toUpperCase() == "2") {
           //print data from api
           rankedFunctions.get2(optionsRanked, eventVariables, gamertagRanked, gamertagRankedFormatted);
@@ -304,7 +312,7 @@ client.on("message", message => {
           //print data from api
           rankedFunctions.getAllTime(optionsAllTime, eventVariables, gamertagRanked, gamertagRankedFormatted);
         } else {
-          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1x/3x/2/3/b1/b2/season/alltime> <gamertag>", eventVariables.userID));
+          eventVariables.channel.send(util.format("<@!%s>, usage: .ranked <1/2/3/b1/b2/season/alltime> <gamertag>", eventVariables.userID));
           return(1);
         }
       break;
