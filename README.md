@@ -1,6 +1,6 @@
-# hw2statsbot
+# hw2-stats-bot
 **v1.2.3** <img src="assets/logo.png" align="right" alt="logo" width="200px" height="200px"></br>
-hw2statsbot is a discord bot that provides statistics for the game halo wars 2</br>
+hw2-stats-bot is a discord bot that provides statistics for the game halo wars 2</br>
 [main code](stats.js) | [author](#author)
 
 ### invite the bot to your server!
@@ -11,8 +11,6 @@ hw2statsbot is a discord bot that provides statistics for the game halo wars 2</
 **ranked stats** - get stats for ranked playlists like rank, csr, mmr, and win percentage</br>
 **leader stats** - get most played leaders</br>
 **build order** - view build order for most recent game of a player
-### upcoming features
-add last build order command
 ### version history
 **1.2.3** - added support for season 11 playlists</br>
 **1.2.2** - user friendly changes, bug fixes</br>
